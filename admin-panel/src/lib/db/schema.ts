@@ -203,22 +203,43 @@ export const mindMapConnections = pgTable('mind_map_connections', {
     createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
-// ============= NOTES (for future) =============
+// ============= TAGS =============
+
+export const tags = pgTable('tags', {
+    id: serial('id').primaryKey(),
+    name: varchar('name', { length: 100 }).notNull().unique(),
+    color: varchar('color', { length: 20 }).default('#6366F1'),
+    usageCount: integer('usage_count').default(0),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// ============= NOTES =============
 
 export const notes = pgTable('notes', {
     id: serial('id').primaryKey(),
     userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
     title: varchar('title', { length: 500 }).notNull(),
-    content: jsonb('content').$type<any>(), // Rich text JSON structure
+    content: jsonb('content').$type<any>(), // Lexical JSON structure
     plainText: text('plain_text'), // For search
     folderId: integer('folder_id'),
-    tags: jsonb('tags').$type<string[]>().default([]),
     backlinks: jsonb('backlinks').$type<number[]>().default([]), // IDs of notes linking to this
     linkedMindMapNodes: jsonb('linked_mind_map_nodes').$type<string[]>().default([]), // Node IDs
     isPinned: boolean('is_pinned').default(false),
     isArchived: boolean('is_archived').default(false),
+    // FTS columns (managed by trigger in database)
+    // searchTsv - tsvector for full-text search (not mapped to Drizzle)
+    // headings - text[] for heading-only searches (not mapped to Drizzle)
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// ============= NOTE_TAGS JUNCTION TABLE =============
+
+export const noteTags = pgTable('note_tags', {
+    noteId: integer('note_id').notNull().references(() => notes.id, { onDelete: 'cascade' }),
+    tagId: integer('tag_id').notNull().references(() => tags.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // ============= RELATIONS =============
@@ -282,10 +303,28 @@ export const mindMapConnectionsRelations = relations(mindMapConnections, ({ one 
     }),
 }));
 
-export const notesRelations = relations(notes, ({ one }) => ({
+export const notesRelations = relations(notes, ({ one, many }) => ({
     user: one(users, {
         fields: [notes.userId],
         references: [users.id],
+    }),
+    noteTags: many(noteTags),
+}));
+
+// Tag Relations
+export const tagsRelations = relations(tags, ({ many }) => ({
+    noteTags: many(noteTags),
+}));
+
+// Note Tags Junction Relations
+export const noteTagsRelations = relations(noteTags, ({ one }) => ({
+    note: one(notes, {
+        fields: [noteTags.noteId],
+        references: [notes.id],
+    }),
+    tag: one(tags, {
+        fields: [noteTags.tagId],
+        references: [tags.id],
     }),
 }));
 

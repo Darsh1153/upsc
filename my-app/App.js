@@ -47,6 +47,9 @@ import {
 // Mind Map Screens
 import { MindMapScreen, MindMapListScreen } from './src/features/MindMap';
 
+// Notes Screens
+import { NoteListScreen, NoteEditorScreen, NotePreviewScreen } from './src/features/Notes';
+
 const Stack = createNativeStackNavigator();
 
 // Loading Screen
@@ -111,6 +114,10 @@ const MainNavigator = () => (
     {/* Mind Map Screens */}
     <Stack.Screen name="MindMap" component={MindMapListScreen} />
     <Stack.Screen name="MindMapEditor" component={MindMapScreen} />
+    {/* Notes Screens */}
+    <Stack.Screen name="Notes" component={NoteListScreen} />
+    <Stack.Screen name="NoteEditor" component={NoteEditorScreen} />
+    <Stack.Screen name="NotePreview" component={NotePreviewScreen} />
   </Stack.Navigator>
 );
 

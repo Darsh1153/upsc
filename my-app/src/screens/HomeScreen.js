@@ -118,6 +118,14 @@ export default function HomeScreen({ navigation }) {
       gradient: ['#06B6D4', '#0891B2'],
       screen: 'MindMap',
     },
+    {
+      id: 'notes',
+      icon: 'document-text-outline',
+      title: 'Notes',
+      desc: 'Create & organize notes',
+      gradient: ['#6366F1', '#8B5CF6'],
+      screen: 'Notes',
+    },
   ];
 
   return (
