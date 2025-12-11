@@ -78,7 +78,7 @@ function extractMainContent(html: string): string {
 }
 
 export async function POST(request: NextRequest) {
-    const user = verifyAuth(request);
+    const user = await verifyAuth(request);
     if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { createServerClient } from '@/lib/supabase';
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -13,11 +14,12 @@ export async function OPTIONS() {
     return NextResponse.json({}, { headers: corsHeaders });
 }
 
-// Login user by email (or create if using OAuth providers)
+// Login user by email (syncs with Supabase user)
+// This route syncs Supabase auth users with the local users table
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { email, name, phone, picture, provider = 'email' } = body;
+        const { email, accessToken } = body;
 
         if (!email) {
             return NextResponse.json(
@@ -26,7 +28,23 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Find user by email
+        // If access token is provided, verify with Supabase
+        let supabaseUser = null;
+        if (accessToken) {
+            const supabase = createServerClient();
+            const { data: { user }, error } = await supabase.auth.getUser(accessToken);
+            
+            if (error || !user) {
+                return NextResponse.json(
+                    { success: false, error: 'Invalid authentication token' },
+                    { status: 401, headers: corsHeaders }
+                );
+            }
+            
+            supabaseUser = user;
+        }
+
+        // Find user by email in local database
         const [existingUser] = await db
             .select()
             .from(users)
@@ -42,15 +60,12 @@ export async function POST(request: NextRequest) {
                 );
             }
 
-            // Update last login and any new info from OAuth
+            // Update last login
             await db
                 .update(users)
                 .set({
                     lastLogin: new Date(),
                     updatedAt: new Date(),
-                    // Update picture if provided (useful for OAuth)
-                    ...(picture && { picture }),
-                    ...(name && { name }),
                 })
                 .where(eq(users.id, existingUser.id));
 
@@ -68,22 +83,23 @@ export async function POST(request: NextRequest) {
             }, { headers: corsHeaders });
         }
 
-        // User doesn't exist - create new account (auto-registration)
-        if (!name) {
+        // User doesn't exist - create new account from Supabase user
+        if (!supabaseUser) {
             return NextResponse.json(
-                { success: false, error: 'Name is required for new users' },
-                { status: 400, headers: corsHeaders }
+                { success: false, error: 'User not found. Please sign up first.' },
+                { status: 404, headers: corsHeaders }
             );
         }
 
+        const userMetadata = supabaseUser.user_metadata || {};
         const [newUser] = await db
             .insert(users)
             .values({
-                email: email.toLowerCase(),
-                name,
-                phone: phone || null,
-                picture: picture || null,
-                provider,
+                email: supabaseUser.email!.toLowerCase(),
+                name: userMetadata.name || userMetadata.full_name || supabaseUser.email?.split('@')[0] || 'User',
+                phone: userMetadata.phone || null,
+                picture: userMetadata.avatar_url || null,
+                provider: supabaseUser.app_metadata?.provider || 'email',
                 role: 'student',
                 isGuest: false,
                 isActive: true,

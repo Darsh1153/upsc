@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
-import { v4 as uuidv4 } from 'uuid';
+import { eq } from 'drizzle-orm';
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
         const { deviceId } = body;
 
         // Generate unique guest identifier
-        const guestId = deviceId || uuidv4();
+        const guestId = deviceId || `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const guestEmail = `guest_${guestId}@guest.local`;
 
         // Check if this guest already exists
@@ -71,7 +71,4 @@ export async function POST(request: NextRequest) {
         );
     }
 }
-
-// Need this import for the eq function
-import { eq } from 'drizzle-orm';
 

@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     // Check if already logged in
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('sb-access-token');
     if (token) {
       router.push('/dashboard');
     }
@@ -25,6 +25,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      console.log('Attempting login...');
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -38,10 +39,17 @@ export default function LoginPage() {
         return;
       }
 
-      localStorage.setItem('token', data.token);
+      // Store tokens and user data
+      localStorage.setItem('sb-access-token', data.token);
+      if (data.refreshToken) {
+        localStorage.setItem('sb-refresh-token', data.refreshToken);
+      }
       localStorage.setItem('user', JSON.stringify(data.user));
+      
+      console.log('Login successful, redirecting...');
       router.push('/dashboard');
     } catch (err) {
+      console.error('Login error:', err);
       setError('Login failed. Please try again.');
     } finally {
       setLoading(false);
@@ -118,10 +126,9 @@ export default function LoginPage() {
 
         <div className="mt-6 p-4 bg-slate-800/50 rounded-xl border border-slate-700">
           <p className="text-xs text-slate-400 text-center">
-            <span className="font-medium text-slate-300">Demo Credentials:</span>
+            <span className="font-medium text-slate-300">Use your Supabase account:</span>
             <br />
-            Username: <code className="text-amber-400 bg-slate-800 px-1.5 py-0.5 rounded">admin</code>
-            {' '} Password: <code className="text-amber-400 bg-slate-800 px-1.5 py-0.5 rounded">123</code>
+            Create an admin user in Supabase Dashboard, or sign up with your email and password.
           </p>
         </div>
       </div>

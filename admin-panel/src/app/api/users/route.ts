@@ -6,7 +6,7 @@ import { verifyAuth } from '@/lib/auth';
 import { logActivity } from '@/lib/activity';
 
 export async function GET(request: NextRequest) {
-    const user = verifyAuth(request);
+    const user = await verifyAuth(request);
     if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-    const user = verifyAuth(request);
+    const user = await verifyAuth(request);
     if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

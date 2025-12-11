@@ -15,15 +15,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../context/AuthContext';
 
-// API Base URL - update this to your server
-const API_BASE_URL = 'http://localhost:3000';
-
 export default function LoginScreen({ navigation }) {
-  const { signIn } = useAuth();
+  const { signInWithEmail, signUpWithEmail } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [loadingType, setLoadingType] = useState(null);
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState('');
   const fadeAnim = useState(new Animated.Value(0))[0];
   const slideAnim = useState(new Animated.Value(50))[0];
@@ -54,7 +53,13 @@ export default function LoginScreen({ navigation }) {
       showError('Please enter your email');
       return;
     }
-    if (!name.trim()) {
+    
+    if (!password.trim()) {
+      showError('Please enter your password');
+      return;
+    }
+
+    if (isSignUp && !name.trim()) {
       showError('Please enter your name');
       return;
     }
@@ -64,83 +69,35 @@ export default function LoginScreen({ navigation }) {
       setLoadingType('email');
       setError('');
 
-      const response = await fetch(`${API_BASE_URL}/api/mobile/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email.trim().toLowerCase(),
-          name: name.trim(),
-          provider: 'email',
-        }),
-      });
+      console.log('Attempting', isSignUp ? 'sign up' : 'sign in', 'with email:', email);
 
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(data.error || 'Login failed');
+      if (isSignUp) {
+        // Sign up new user
+        await signUpWithEmail(
+          email.trim().toLowerCase(),
+          password,
+          name.trim()
+        );
+      } else {
+        // Sign in existing user
+        await signInWithEmail(
+          email.trim().toLowerCase(),
+          password
+        );
       }
 
-      // Sign in with the user data from API
-      await signIn({
-        id: data.user.id,
-        email: data.user.email,
-        name: data.user.name,
-        picture: data.user.picture,
-        provider: 'email',
-      });
-
+      console.log('Authentication successful');
       // Navigation handled automatically by AuthContext
     } catch (err) {
       console.error('Login error:', err);
-      showError(err.message || 'Failed to sign in. Please try again.');
+      const errorMessage = err.message || 'Failed to sign in. Please try again.';
+      showError(errorMessage);
     } finally {
       setIsLoading(false);
       setLoadingType(null);
     }
   };
 
-  const handleGuestMode = async () => {
-    try {
-      setIsLoading(true);
-      setLoadingType('guest');
-      setError('');
-
-      const response = await fetch(`${API_BASE_URL}/api/mobile/auth/guest`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          deviceId: `device_${Date.now()}`,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(data.error || 'Guest login failed');
-      }
-
-      // Sign in with the guest user data
-      await signIn({
-        id: data.user.id,
-        email: data.user.email,
-        name: data.user.name,
-        provider: 'guest',
-        isGuest: true,
-      });
-
-      // Navigation handled automatically by AuthContext
-    } catch (err) {
-      console.error('Guest login error:', err);
-      showError(err.message || 'Failed to continue as guest. Please try again.');
-    } finally {
-      setIsLoading(false);
-      setLoadingType(null);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -202,18 +159,20 @@ export default function LoginScreen({ navigation }) {
 
             {/* Login Form */}
             <View style={styles.formSection}>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>Name</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter your name"
-                  placeholderTextColor="#999"
-                  value={name}
-                  onChangeText={setName}
-                  autoCapitalize="words"
-                  editable={!isLoading}
-                />
-              </View>
+              {isSignUp && (
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputLabel}>Name</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter your name"
+                    placeholderTextColor="#999"
+                    value={name}
+                    onChangeText={setName}
+                    autoCapitalize="words"
+                    editable={!isLoading}
+                  />
+                </View>
+              )}
 
               <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>Email</Text>
@@ -230,7 +189,22 @@ export default function LoginScreen({ navigation }) {
                 />
               </View>
 
-              {/* Sign In Button */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Password</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your password"
+                  placeholderTextColor="#999"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  editable={!isLoading}
+                />
+              </View>
+
+              {/* Sign In/Up Button */}
               <TouchableOpacity
                 style={[styles.primaryButton, isLoading && styles.buttonDisabled]}
                 onPress={handleEmailLogin}
@@ -246,31 +220,28 @@ export default function LoginScreen({ navigation }) {
                   {loadingType === 'email' ? (
                     <ActivityIndicator size="small" color="#FFF" />
                   ) : (
-                    <Text style={styles.primaryButtonText}>Continue</Text>
+                    <Text style={styles.primaryButtonText}>
+                      {isSignUp ? 'Sign Up' : 'Sign In'}
+                    </Text>
                   )}
                 </LinearGradient>
               </TouchableOpacity>
 
-              {/* Divider */}
-              <View style={styles.divider}>
-                <View style={styles.dividerLine} />
-                <Text style={styles.dividerText}>or</Text>
-                <View style={styles.dividerLine} />
-              </View>
-
-              {/* Guest Mode */}
+              {/* Toggle Sign Up/Sign In */}
               <TouchableOpacity
-                style={styles.guestButton}
-                onPress={handleGuestMode}
-                disabled={isLoading}
-                activeOpacity={0.8}
+                onPress={() => {
+                  setIsSignUp(!isSignUp);
+                  setError('');
+                }}
+                style={styles.toggleButton}
               >
-                {loadingType === 'guest' ? (
-                  <ActivityIndicator size="small" color="#8E54E9" />
-                ) : (
-                  <Text style={styles.guestButtonText}>Continue as Guest</Text>
-                )}
+                <Text style={styles.toggleButtonText}>
+                  {isSignUp
+                    ? 'Already have an account? Sign In'
+                    : "Don't have an account? Sign Up"}
+                </Text>
               </TouchableOpacity>
+
             </View>
 
             {/* Terms */}
@@ -460,10 +431,15 @@ const styles = StyleSheet.create({
     borderColor: '#8E54E9',
     borderStyle: 'dashed',
   },
-  guestButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
+  toggleButton: {
+    marginTop: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  toggleButtonText: {
+    fontSize: 14,
     color: '#8E54E9',
+    fontWeight: '600',
   },
   termsText: {
     fontSize: 12,

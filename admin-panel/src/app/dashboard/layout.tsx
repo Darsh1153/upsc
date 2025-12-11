@@ -36,7 +36,7 @@ export default function DashboardLayout({
     const pathname = usePathname();
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('sb-access-token');
         if (!token) {
             router.push('/');
         } else {
@@ -45,7 +45,8 @@ export default function DashboardLayout({
     }, [router]);
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
+        localStorage.removeItem('sb-access-token');
+        localStorage.removeItem('sb-refresh-token');
         localStorage.removeItem('user');
         router.push('/');
     };

@@ -9,7 +9,7 @@ export async function PATCH(
     request: NextRequest,
     { params }: { params: { id: string } }
 ) {
-    const user = verifyAuth(request);
+    const user = await verifyAuth(request);
     if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
