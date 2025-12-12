@@ -11,6 +11,30 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { 
+  IconBook, 
+  IconAlertTriangle,
+  IconBuilding,
+  IconSword,
+  IconFlag,
+  IconWorld,
+  IconMap,
+  IconTheater,
+  IconScale,
+  IconUsers,
+  IconGlobe,
+  IconCurrencyDollar,
+  IconPlant,
+  IconMicroscope,
+  IconShield,
+  IconAlertCircle,
+  IconCompass,
+  IconNews,
+  IconFileText,
+  IconPencil,
+  IconBookOpen,
+  IconApps
+} from '../icons/compat';
 import { useFocusEffect } from '@react-navigation/native';
 import { 
   TOPIC_STATUS,
@@ -85,6 +109,33 @@ export default function RoadmapScreen({ navigation }) {
     }
   };
 
+  // Map icon names to Tabler icon components
+  const getIconComponent = (iconName) => {
+    const iconMap = {
+      'IconBuilding': IconBuilding,
+      'IconSword': IconSword,
+      'IconFlag': IconFlag,
+      'IconWorld': IconWorld,
+      'IconMap': IconMap,
+      'IconTheater': IconTheater,
+      'IconScale': IconScale,
+      'IconUsers': IconUsers,
+      'IconGlobe': IconGlobe,
+      'IconCurrencyDollar': IconCurrencyDollar,
+      'IconPlant': IconPlant,
+      'IconMicroscope': IconMicroscope,
+      'IconShield': IconShield,
+      'IconAlertCircle': IconAlertCircle,
+      'IconCompass': IconCompass,
+      'IconNews': IconNews,
+      'IconFileText': IconFileText,
+      'IconPencil': IconPencil,
+      'IconBook': IconBook,
+      'IconBookOpen': IconBookOpen,
+    };
+    return iconMap[iconName] || IconBook;
+  };
+
   const getRevisionLabel = (revisionStatus) => {
     switch (revisionStatus) {
       case REVISION_STATUS.FIRST_READ: return 'Read Once';
@@ -146,8 +197,16 @@ export default function RoadmapScreen({ navigation }) {
           </View>
           
           <View style={styles.hoursRow}>
+            <LinearGradient
+              colors={['#C4B5FD', '#A78BFA', '#93C5FD']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.hoursIconContainer}
+            >
+              <IconBook stroke={2} size={20} color="#FFFFFF" />
+            </LinearGradient>
             <Text style={styles.hoursText}>
-              📚 {stats.totalHoursStudied || 0}h studied / {stats.estimatedTotalHours || 0}h estimated
+              {stats.totalHoursStudied || 0}h studied / {stats.estimatedTotalHours || 0}h estimated
             </Text>
           </View>
         </LinearGradient>
@@ -211,12 +270,35 @@ export default function RoadmapScreen({ navigation }) {
                 style={[styles.revisionCard, { backgroundColor: theme.colors.surface }, item.isOverdue && { backgroundColor: isDark ? '#3D1515' : '#FFF5F5', borderLeftColor: theme.colors.error }]}
                 onPress={() => navigation.navigate('TopicDetail', { topicId: item.topicId })}
               >
-                <Text style={styles.revisionIcon}>{item.icon}</Text>
+                <LinearGradient
+                  colors={['#667eea', '#764ba2', '#5a4fcf']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.revisionIconContainer}
+                >
+                  {React.createElement(getIconComponent(item.icon), { 
+                    size: 24, 
+                    color: '#FFFFFF',
+                    stroke: 2 
+                  })}
+                </LinearGradient>
                 <View style={styles.revisionInfo}>
                   <Text style={[styles.revisionTopicName, { color: theme.colors.text }]}>{item.topicName}</Text>
-                  <Text style={[styles.revisionDue, { color: theme.colors.textSecondary }, item.isOverdue && { color: theme.colors.error }]}>
-                    {item.isOverdue ? '⚠️ Overdue' : `Due: ${new Date(item.dueDate).toLocaleDateString()}`}
-                  </Text>
+                  <View style={styles.revisionDueContainer}>
+                    {item.isOverdue && (
+                      <LinearGradient
+                        colors={['#F59E0B', '#D97706', '#B45309']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.revisionWarningIconContainer}
+                      >
+                        <IconAlertTriangle stroke={2} size={14} color="#FFFFFF" />
+                      </LinearGradient>
+                    )}
+                    <Text style={[styles.revisionDue, { color: theme.colors.textSecondary }, item.isOverdue && { color: theme.colors.error }]}>
+                      {item.isOverdue ? 'Overdue' : `Due: ${new Date(item.dueDate).toLocaleDateString()}`}
+                    </Text>
+                  </View>
                 </View>
                 <View style={styles.revisionBadge}>
                   <Text style={styles.revisionBadgeText}>R{item.revisionNumber}</Text>
@@ -229,41 +311,125 @@ export default function RoadmapScreen({ navigation }) {
         {/* Paper Filter */}
         {viewMode === 'topics' && (
           <>
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false} 
-              style={styles.filterScroll}
-              contentContainerStyle={styles.filterContainer}
-            >
+            <View style={styles.filterContainer}>
               <TouchableOpacity
-                style={[styles.filterChip, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }, selectedPaper === 'all' && styles.filterChipActive]}
+                key="all"
+                activeOpacity={0.7}
+                style={[
+                  styles.filterChip, 
+                  { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+                  selectedPaper === 'all' && { borderColor: '#6366F1' },
+                ]}
                 onPress={() => setSelectedPaper('all')}
               >
-                <Text style={[styles.filterText, { color: theme.colors.text }, selectedPaper === 'all' && styles.filterTextActive]}>
-                  All Topics
-                </Text>
+                {selectedPaper === 'all' ? (
+                  <LinearGradient
+                    colors={['#6366F1', '#4F46E5', '#4338CA']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.filterChipGradient}
+                  >
+                    <LinearGradient
+                      colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.filterIconContainer}
+                    >
+                      <IconApps size={18} color="#FFFFFF" stroke={2.5} />
+                    </LinearGradient>
+                    <Text style={styles.filterTextActive}>
+                      All Topics
+                    </Text>
+                  </LinearGradient>
+                ) : (
+                  <View style={styles.filterChipContent}>
+                    <LinearGradient
+                      colors={['#667eea', '#764ba2', '#5a4fcf']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.filterIconContainer}
+                    >
+                      <IconApps size={18} color="#FFFFFF" stroke={2} />
+                    </LinearGradient>
+                    <Text style={[styles.filterText, { color: theme.colors.text }]}>
+                      All Topics
+                    </Text>
+                  </View>
+                )}
               </TouchableOpacity>
-              {paperCategories.map((paper) => (
-                <TouchableOpacity
-                  key={paper.id}
-                  style={[
-                    styles.filterChip, 
-                    { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
-                    selectedPaper === paper.id && styles.filterChipActive,
-                    selectedPaper === paper.id && { backgroundColor: paper.color }
-                  ]}
-                  onPress={() => setSelectedPaper(paper.id)}
-                >
-                  <Text style={[
-                    styles.filterText, 
-                    { color: theme.colors.text },
-                    selectedPaper === paper.id && styles.filterTextActive
-                  ]}>
-                    {paper.icon} {paper.id}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+              {paperCategories.map((paper) => {
+                const isSelected = selectedPaper === paper.id;
+                const getGradientColors = (color) => {
+                  // Create gradient shades from the base color
+                  const colorMap = {
+                    '#FF6B6B': ['#FF6B6B', '#FF5252', '#FF3D3D'],
+                    '#4ECDC4': ['#4ECDC4', '#26A69A', '#00897B'],
+                    '#45B7D1': ['#45B7D1', '#29B6F6', '#0288D1'],
+                    '#96CEB4': ['#96CEB4', '#81C784', '#66BB6A'],
+                    '#FF9F43': ['#FF9F43', '#FF8A00', '#FF6F00'],
+                    '#A55EEA': ['#A55EEA', '#8B5CF6', '#7C3AED'],
+                    '#778CA3': ['#778CA3', '#6C7A89', '#5A6C7D'],
+                  };
+                  return colorMap[color] || [color, color, color];
+                };
+                
+                return (
+                  <TouchableOpacity
+                    key={paper.id}
+                    activeOpacity={0.7}
+                    style={[
+                      styles.filterChip, 
+                      { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+                      isSelected && { borderColor: paper.color },
+                    ]}
+                    onPress={() => setSelectedPaper(paper.id)}
+                  >
+                    {isSelected ? (
+                      <LinearGradient
+                        colors={getGradientColors(paper.color)}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.filterChipGradient}
+                      >
+                        <LinearGradient
+                          colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={styles.filterIconContainer}
+                        >
+                          {React.createElement(getIconComponent(paper.icon), { 
+                            size: 18, 
+                            color: '#FFFFFF',
+                            stroke: 2.5 
+                          })}
+                        </LinearGradient>
+                        <Text style={styles.filterTextActive}>
+                          {paper.id}
+                        </Text>
+                      </LinearGradient>
+                    ) : (
+                      <View style={styles.filterChipContent}>
+                        <LinearGradient
+                          colors={['#667eea', '#764ba2', '#5a4fcf']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={styles.filterIconContainer}
+                        >
+                          {React.createElement(getIconComponent(paper.icon), { 
+                            size: 20, 
+                            color: '#FFFFFF',
+                            stroke: 2 
+                          })}
+                        </LinearGradient>
+                        <Text style={[styles.filterText, { color: theme.colors.text }]}>
+                          {paper.id}
+                        </Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
 
             {/* Topics List */}
             <View style={styles.section}>
@@ -284,9 +450,18 @@ export default function RoadmapScreen({ navigation }) {
                     activeOpacity={0.7}
                   >
                     <View style={styles.topicHeader}>
-                      <View style={[styles.topicIconContainer, { backgroundColor: theme.colors.surfaceSecondary }]}>
-                        <Text style={styles.topicIcon}>{topic.icon}</Text>
-                      </View>
+                      <LinearGradient
+                        colors={['#667eea', '#764ba2', '#5a4fcf']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.topicIconContainer}
+                      >
+                        {React.createElement(getIconComponent(topic.icon), { 
+                          size: 24, 
+                          color: '#FFFFFF',
+                          stroke: 2 
+                        })}
+                      </LinearGradient>
                       <View style={styles.topicInfo}>
                         <Text style={[styles.topicName, { color: theme.colors.text }]}>{topic.name}</Text>
                         <View style={styles.topicMeta}>
@@ -429,10 +604,24 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.3)',
   },
   hoursRow: {
+    flexDirection: 'row',
     alignItems: 'center',
     paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255,255,255,0.2)',
+  },
+  hoursIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+    shadowColor: '#3B82F6',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   hoursText: {
     fontSize: 14,
@@ -488,34 +677,51 @@ const styles = StyleSheet.create({
     color: '#1C1C1E',
     marginBottom: 12,
   },
-  filterScroll: {
-    marginBottom: 16,
-    marginHorizontal: -20,
-  },
   filterContainer: {
-    paddingHorizontal: 20,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 16,
     gap: 8,
   },
   filterChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: '#FFF',
-    marginRight: 8,
-    borderWidth: 1,
-    borderColor: '#E5E5EA',
+    borderRadius: 16,
+    borderWidth: 2,
+    overflow: 'hidden',
+    flexShrink: 0,
   },
-  filterChipActive: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF',
+  filterChipContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  filterChipGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  filterIconContainer: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
   },
   filterText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#1C1C1E',
+    fontSize: 13,
+    fontWeight: '600',
+    letterSpacing: 0.2,
   },
   filterTextActive: {
-    color: '#FFF',
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: 0.2,
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   topicCard: {
     backgroundColor: '#FFF',
@@ -537,10 +743,14 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 12,
-    backgroundColor: '#F2F2F7',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+    shadowColor: '#667eea',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   topicIcon: {
     fontSize: 22,
@@ -652,9 +862,39 @@ const styles = StyleSheet.create({
     borderLeftColor: '#FF3B30',
     backgroundColor: '#FFF5F5',
   },
+  revisionIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+    shadowColor: '#667eea',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
   revisionIcon: {
     fontSize: 24,
-    marginRight: 12,
+  },
+  revisionDueContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  revisionWarningIconContainer: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 6,
+    shadowColor: '#F59E0B',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   revisionInfo: {
     flex: 1,
@@ -667,7 +907,6 @@ const styles = StyleSheet.create({
   revisionDue: {
     fontSize: 13,
     color: '#8E8E93',
-    marginTop: 2,
   },
   overdueText: {
     color: '#FF3B30',

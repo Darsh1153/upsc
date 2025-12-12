@@ -9,7 +9,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import { 
+  IconFileTextFilled,
+  IconPencil,
+  IconRocket,
+  IconSparkles
+} from '../icons/compat';
 import { useTheme } from '../features/Reference/theme/ThemeContext';
 import { useWebStyles } from '../components/WebContainer';
 
@@ -156,9 +161,21 @@ export default function EssayScreen({ navigation }) {
 
         {/* Essay Structure Info */}
         <View style={[styles.infoCard, { backgroundColor: theme.colors.infoBg }]}>
-          <Text style={[styles.infoTitle, { color: theme.colors.info }]}>
-            <Ionicons name="document-text" size={14} color={theme.colors.info} /> Essay Structure
-          </Text>
+          <View style={styles.infoTitleContainer}>
+            <LinearGradient
+              colors={
+                isDark
+                  ? ['#0F172A', '#1E3A8A', '#3B82F6']        // dark mode
+                  : ['#1E40AF', '#3B82F6', '#60A5FA']        // light mode
+              }
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.infoIconContainer}
+            >
+              <IconFileTextFilled size={16} color="#FFFFFF" />
+            </LinearGradient>
+            <Text style={[styles.infoTitle, { color: theme.colors.info }]}>Essay Structure</Text>
+          </View>
           <View style={styles.infoList}>
             <Text style={[styles.infoItem, { color: theme.colors.text }]}>• Introduction (10-15%)</Text>
             <Text style={[styles.infoItem, { color: theme.colors.text }]}>• Body with arguments (70-75%)</Text>
@@ -179,15 +196,19 @@ export default function EssayScreen({ navigation }) {
             end={{ x: 1, y: 0 }}
             style={styles.buttonGradient}
           >
-            <Text style={styles.buttonText}>Generate Essay ✍️</Text>
+            <View style={styles.buttonContent}>
+              <Text style={styles.buttonText}>Generate Essay</Text>
+            </View>
           </LinearGradient>
         </TouchableOpacity>
 
         {/* Coming Soon Notice */}
-        <View style={[styles.comingSoon, { backgroundColor: theme.colors.surfaceSecondary }]}>
-          <Text style={[styles.comingSoonText, { color: theme.colors.textSecondary }]}>
-            <Ionicons name="rocket" size={14} color={theme.colors.textSecondary} /> AI-powered essay generation coming soon!
-          </Text>
+        <View style={[styles.comingSoon, { backgroundColor: theme.colors.surfaceSecondary, borderColor: theme.colors.border }]}>
+          <View style={styles.comingSoonContent}>
+            <Text style={[styles.comingSoonText, { color: theme.colors.textSecondary }]}>
+              AI-powered essay generation coming soon!
+            </Text>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -334,11 +355,27 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 24,
   },
+  infoTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  infoIconContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
   infoTitle: {
     fontSize: 15,
     fontWeight: '600',
     color: '#B8860B',
-    marginBottom: 10,
   },
   infoList: {},
   infoItem: {
@@ -353,9 +390,14 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   buttonGradient: {
-    paddingVertical: 18,
+    paddingVertical: 14,
     borderRadius: 14,
     alignItems: 'center',
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   buttonText: {
     fontSize: 17,
@@ -366,10 +408,24 @@ const styles = StyleSheet.create({
   comingSoon: {
     marginTop: 16,
     alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  comingSoonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   comingSoonText: {
-    fontSize: 13,
-    fontWeight: '500',
+    fontSize: 14,
+    fontWeight: '600',
     color: '#8E8E93',
     letterSpacing: -0.2,
   },

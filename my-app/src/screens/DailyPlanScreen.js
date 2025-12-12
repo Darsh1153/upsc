@@ -12,6 +12,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { 
+  IconRefresh,
+  IconNews,
+  IconPencil,
+  IconBook,
+  IconConfetti
+} from '../icons/compat';
 import { useFocusEffect } from '@react-navigation/native';
 import { 
   getDailyPlan, 
@@ -176,10 +183,10 @@ export default function DailyPlanScreen({ navigation }) {
 
   const getTaskTypeIcon = (type) => {
     switch (type) {
-      case 'revision': return '🔄';
-      case 'current_affairs': return '📰';
-      case 'test': return '📝';
-      default: return '📚';
+      case 'revision': return IconRefresh;
+      case 'current_affairs': return IconNews;
+      case 'test': return IconPencil;
+      default: return IconBook;
     }
   };
 
@@ -254,9 +261,21 @@ export default function DailyPlanScreen({ navigation }) {
           <View style={styles.progressHeader}>
             <View>
               <Text style={styles.progressDate}>{formatDate(selectedDate)}</Text>
-              <Text style={styles.progressTitle}>
-                {completionPercentage >= 100 ? '🎉 All Done!' : 'Keep Going!'}
-              </Text>
+              <View style={styles.progressTitleContainer}>
+                {completionPercentage >= 100 && (
+                  <LinearGradient
+                    colors={['#F59E0B', '#D97706', '#B45309']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.progressTitleIconContainer}
+                  >
+                    <IconConfetti stroke={2} size={18} color="#FFFFFF" />
+                  </LinearGradient>
+                )}
+                <Text style={styles.progressTitle}>
+                  {completionPercentage >= 100 ? 'All Done!' : 'Keep Going!'}
+                </Text>
+              </View>
             </View>
             <View style={styles.progressCircle}>
               <Text style={styles.progressPercentage}>{completionPercentage}%</Text>
@@ -345,7 +364,18 @@ export default function DailyPlanScreen({ navigation }) {
                     
                     <View style={styles.taskContent}>
                       <View style={styles.taskHeader}>
-                        <Text style={styles.taskTypeIcon}>{getTaskTypeIcon(task.type)}</Text>
+                        <LinearGradient
+                          colors={typeColors}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={styles.taskTypeIconContainer}
+                        >
+                          {React.createElement(getTaskTypeIcon(task.type), {
+                            stroke: 2,
+                            size: 12,
+                            color: '#FFFFFF'
+                          })}
+                        </LinearGradient>
                         <View style={[styles.taskTypeBadge, { backgroundColor: typeColors[0] }]}>
                           <Text style={styles.taskTypeBadgeText}>
                             {task.type?.replace('_', ' ') || 'Study'}
@@ -563,6 +593,18 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.8)',
     marginBottom: 4,
   },
+  progressTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  progressTitleIconContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   progressTitle: {
     fontSize: 22,
     fontWeight: '700',
@@ -703,9 +745,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 6,
   },
-  taskTypeIcon: {
-    fontSize: 16,
-    marginRight: 6,
+  taskTypeIconContainer: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 2,
   },
   taskTypeBadge: {
     paddingHorizontal: 8,
@@ -714,7 +760,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   taskTypeBadgeText: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '600',
     color: '#FFF',
     textTransform: 'capitalize',

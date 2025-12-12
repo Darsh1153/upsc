@@ -8,6 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 import { useFocusEffect } from '@react-navigation/native';
@@ -148,45 +149,87 @@ export default function ProgressScreen({ navigation }) {
 
         {/* Streak Card */}
         <View style={[styles.streakCard, { backgroundColor: theme.colors.surface }]}>
-          <View style={styles.streakMain}>
-            <Ionicons name="flame" size={32} color="#FF9500" />
-            <View style={styles.streakInfo}>
-              <Text style={[styles.streakNumber, { color: theme.colors.text }]}>{streak?.currentStreak || 0}</Text>
-              <Text style={[styles.streakLabel, { color: theme.colors.textSecondary }]}>Day Streak</Text>
+          <LinearGradient
+            colors={['#FF6B35', '#F7931E', '#FF9500']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.streakGradient}
+          >
+            <View style={styles.streakMain}>
+              <LinearGradient
+                colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.2)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.streakIconContainer}
+              >
+                <Ionicons name="flame" size={40} color="#FFFFFF" />
+              </LinearGradient>
+              <View style={styles.streakInfo}>
+                <Text style={styles.streakNumber}>{streak?.currentStreak || 0}</Text>
+                <Text style={styles.streakLabel}>Day Streak</Text>
+              </View>
             </View>
-          </View>
-          <View style={[styles.streakStats, { borderTopColor: theme.colors.border }]}>
-            <View style={styles.streakStatItem}>
-              <Text style={[styles.streakStatNum, { color: theme.colors.text }]}>{streak?.longestStreak || 0}</Text>
-              <Text style={[styles.streakStatLabel, { color: theme.colors.textSecondary }]}>Best Streak</Text>
+            <View style={styles.streakStats}>
+              <View style={styles.streakStatItem}>
+                <Text style={styles.streakStatNum}>{streak?.longestStreak || 0}</Text>
+                <Text style={styles.streakStatLabel}>Best Streak</Text>
+              </View>
+              <View style={styles.streakDivider} />
+              <View style={styles.streakStatItem}>
+                <Text style={styles.streakStatNum}>{streak?.activeDays?.length || 0}</Text>
+                <Text style={styles.streakStatLabel}>Active Days</Text>
+              </View>
             </View>
-            <View style={[styles.streakDivider, { backgroundColor: theme.colors.border }]} />
-            <View style={styles.streakStatItem}>
-              <Text style={[styles.streakStatNum, { color: theme.colors.text }]}>{streak?.activeDays?.length || 0}</Text>
-              <Text style={[styles.streakStatLabel, { color: theme.colors.textSecondary }]}>Active Days</Text>
-            </View>
-          </View>
+          </LinearGradient>
         </View>
 
         {/* Stats Overview */}
         <View style={styles.statsGrid}>
           <View style={[styles.statCard, { backgroundColor: theme.colors.surface }]}>
-            <Ionicons name="create-outline" size={24} color={theme.colors.primary} />
+            <LinearGradient
+              colors={['#3B82F6', '#2563EB', '#1D4ED8']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.statIconContainer}
+            >
+              <Ionicons name="pencil" size={22} color="#FFFFFF" />
+            </LinearGradient>
             <Text style={[styles.statValue, { color: theme.colors.text }]}>{stats?.totalTests || 0}</Text>
             <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>Tests Taken</Text>
           </View>
           <View style={[styles.statCard, { backgroundColor: theme.colors.surface }]}>
-            <Ionicons name="help-circle-outline" size={24} color={theme.colors.warning} />
+            <LinearGradient
+              colors={['#FF9500', '#FF8800', '#FF7A00']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.statIconContainer}
+            >
+              <Ionicons name="help-circle" size={22} color="#FFFFFF" />
+            </LinearGradient>
             <Text style={[styles.statValue, { color: theme.colors.text }]}>{stats?.totalQuestions || 0}</Text>
             <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>Questions</Text>
           </View>
           <View style={[styles.statCard, { backgroundColor: theme.colors.surface }]}>
-            <Ionicons name="checkmark-circle-outline" size={24} color={theme.colors.success} />
+            <LinearGradient
+              colors={['#10B981', '#059669', '#047857']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.statIconContainer}
+            >
+              <Ionicons name="checkmark-circle" size={22} color="#FFFFFF" />
+            </LinearGradient>
             <Text style={[styles.statValue, { color: theme.colors.text }]}>{stats?.correctAnswers || 0}</Text>
             <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>Correct</Text>
           </View>
           <View style={[styles.statCard, { backgroundColor: theme.colors.surface }]}>
-            <Ionicons name="analytics-outline" size={24} color={theme.colors.secondary} />
+            <LinearGradient
+              colors={['#667eea', '#764ba2', '#5a4fcf']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.statIconContainer}
+            >
+              <Ionicons name="bar-chart" size={22} color="#FFFFFF" />
+            </LinearGradient>
             <Text style={[styles.statValue, { color: theme.colors.text }]}>{avgScore}%</Text>
             <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>Accuracy</Text>
           </View>
@@ -295,7 +338,14 @@ export default function ProgressScreen({ navigation }) {
 
         {/* Time Stats */}
         <View style={[styles.timeCard, { backgroundColor: theme.colors.surface }]}>
-          <Ionicons name="time-outline" size={40} color={theme.colors.primary} />
+          <LinearGradient
+            colors={['#3B82F6', '#2563EB', '#1D4ED8']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.timeIconContainer}
+          >
+            <Ionicons name="time" size={32} color="#FFFFFF" />
+          </LinearGradient>
           <View style={styles.timeInfo}>
             <Text style={[styles.timeLabel, { color: theme.colors.textSecondary }]}>Total Study Time</Text>
             <Text style={[styles.timeValue, { color: theme.colors.text }]}>
@@ -353,18 +403,30 @@ const styles = StyleSheet.create({
     letterSpacing: -0.3,
   },
   streakCard: {
-    backgroundColor: '#FF9500',
     borderRadius: 20,
-    padding: 20,
     marginBottom: 20,
+    overflow: 'hidden',
+    shadowColor: '#FF6B35',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  streakGradient: {
+    padding: 20,
+    borderRadius: 20,
   },
   streakMain: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
   },
-  streakFire: {
-    fontSize: 48,
+  streakIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 16,
   },
   streakInfo: {},
@@ -405,6 +467,19 @@ const styles = StyleSheet.create({
     width: 1,
     backgroundColor: 'rgba(255,255,255,0.3)',
     marginHorizontal: 12,
+  },
+  statIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    shadowColor: '#3B82F6',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
   },
   statsGrid: {
     flexDirection: 'row',
@@ -570,8 +645,18 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 3,
   },
-  timeIconWrapper: {
+  timeIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 16,
+    shadowColor: '#3B82F6',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 4,
   },
   timeInfo: {},
   timeLabel: {

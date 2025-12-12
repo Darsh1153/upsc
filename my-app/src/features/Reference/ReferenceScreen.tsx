@@ -429,6 +429,7 @@ const styles = StyleSheet.create({
   heroStatItem: {
     alignItems: 'center',
     flex: 1,
+    paddingInline: 10
   },
   heroStatValue: {
     fontSize: 24,

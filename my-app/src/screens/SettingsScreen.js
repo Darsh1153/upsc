@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { IconMailCheck, IconSunFilled, IconMoonFilled, IconBellFilled, IconNotification, IconLogout, IconTrash, IconCloudOff, IconUserX } from '../icons/compat';
 import { getSettings, updateSettings, clearAllData } from '../utils/storage';
 import {
   scheduleDailyReminder,
@@ -226,7 +227,7 @@ export default function SettingsScreen({ navigation }) {
       case 'guest':
         return '👤';
       default:
-        return '📧';
+        return 'email';
     }
   };
 
@@ -294,7 +295,16 @@ export default function SettingsScreen({ navigation }) {
           <View style={styles.profileInfo}>
             <Text style={[styles.profileName, { color: theme.colors.text }]}>{user?.name || 'UPSC Aspirant'}</Text>
             <View style={styles.profileProviderRow}>
-              <Text style={styles.profileProviderIcon}>{getProviderIcon()}</Text>
+              {getProviderIcon() === 'email' ? (
+                <IconMailCheck 
+                  stroke={1.5} 
+                  size={16} 
+                  color={isDark ? '#E5E5E5' : '#4A4A4A'} 
+                  style={styles.profileProviderIconContainer}
+                />
+              ) : (
+                <Text style={styles.profileProviderIcon}>{getProviderIcon()}</Text>
+              )}
               <Text style={[styles.profileProvider, { color: theme.colors.textSecondary }]}>
                 {user?.isGuest ? 'Guest Mode' : `Signed in with ${getProviderName()}`}
               </Text>
@@ -322,9 +332,23 @@ export default function SettingsScreen({ navigation }) {
         <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
           <View style={styles.settingRow}>
             <View style={styles.settingInfo}>
-              <Text style={styles.settingIcon}>{isDark ? '🌙' : '☀️'}</Text>
+              <LinearGradient
+                colors={isDark 
+                  ? ['#1E293B', '#334155', '#475569'] 
+                  : ['#FFF8E1', '#FFECB3', '#FFE082']
+                }
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.settingIconContainer}
+              >
+                {isDark ? (
+                  <IconMoonFilled size={22} color="#E2E8F0" />
+                ) : (
+                  <IconSunFilled size={22} color="#FFA000" />
+                )}
+              </LinearGradient>
               <View style={styles.settingText}>
-                <Text style={[styles.settingTitle, { color: theme.colors.text }]}>Dark Mode</Text>
+                <Text style={[styles.settingTitle, { color: theme.colors.text }]}>Mode</Text>
                 <Text style={[styles.settingDesc, { color: theme.colors.textSecondary }]}>
                   {isDark ? 'Currently using dark theme' : 'Currently using light theme'}
                 </Text>
@@ -344,7 +368,14 @@ export default function SettingsScreen({ navigation }) {
         <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
           <View style={styles.settingRow}>
             <View style={styles.settingInfo}>
-              <Text style={styles.settingIcon}>🔔</Text>
+              <LinearGradient
+                colors={['#3B82F6', '#2563EB', '#1D4ED8']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.settingIconContainer}
+              >
+                <IconBellFilled size={22} color="#FFFFFF" />
+              </LinearGradient>
               <View style={styles.settingText}>
                 <Text style={[styles.settingTitle, { color: theme.colors.text }]}>Daily Reminder</Text>
                 <Text style={[styles.settingDesc, { color: theme.colors.textSecondary }]}>Get notified to practice daily</Text>
@@ -393,18 +424,32 @@ export default function SettingsScreen({ navigation }) {
 
         {/* Test Notification */}
         <TouchableOpacity style={[styles.actionCard, { backgroundColor: theme.colors.surface }]} onPress={handleTestNotification}>
-          <Text style={styles.actionIcon}>📨</Text>
+          <LinearGradient
+            colors={['#8B5CF6', '#7C3AED', '#6D28D9']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.actionIconContainer}
+          >
+            <IconNotification stroke={2} size={26} color="#FFFFFF" />
+          </LinearGradient>
           <View style={styles.actionInfo}>
             <Text style={[styles.actionTitle, { color: theme.colors.text }]}>Test Notification</Text>
             <Text style={[styles.actionDesc, { color: theme.colors.textSecondary }]}>Send a test notification now</Text>
           </View>
-          <Text style={[styles.actionArrow, { color: theme.colors.textTertiary }]}>→</Text>
+          <Ionicons name="chevron-forward" size={20} color={theme.colors.textTertiary} />
         </TouchableOpacity>
 
         {/* Offline Section */}
         <Text style={[styles.sectionTitle, { color: theme.colors.textSecondary }]}>Offline Mode</Text>
         <View style={[styles.infoCard, { backgroundColor: theme.colors.infoBg }]}>
-          <Text style={styles.infoIcon}>📱</Text>
+          <LinearGradient
+            colors={['#10B981', '#059669', '#047857']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.infoIconContainer}
+          >
+            <IconCloudOff stroke={2} size={24} color="#FFFFFF" />
+          </LinearGradient>
           <View style={styles.infoContent}>
             <Text style={[styles.infoTitle, { color: theme.colors.info }]}>Works Offline!</Text>
             <Text style={[styles.infoText, { color: theme.colors.text }]}>
@@ -419,13 +464,20 @@ export default function SettingsScreen({ navigation }) {
         <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
           <TouchableOpacity style={styles.settingRow} onPress={handleClearData}>
             <View style={styles.settingInfo}>
-              <Text style={styles.settingIcon}>🗑️</Text>
+              <LinearGradient
+                colors={['#EF4444', '#DC2626', '#B91C1C']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.settingIconContainer}
+              >
+                <IconTrash stroke={2} size={22} color="#FFFFFF" />
+              </LinearGradient>
               <View style={styles.settingText}>
                 <Text style={[styles.settingTitle, { color: theme.colors.error }]}>Clear All Data</Text>
                 <Text style={[styles.settingDesc, { color: theme.colors.textSecondary }]}>Delete all progress and saved data</Text>
               </View>
             </View>
-            <Text style={[styles.settingArrow, { color: theme.colors.textTertiary }]}>→</Text>
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.textTertiary} />
           </TouchableOpacity>
         </View>
 
@@ -452,7 +504,14 @@ export default function SettingsScreen({ navigation }) {
             disabled={isSigningOut}
           >
             <View style={styles.settingInfo}>
-              <Text style={styles.settingIcon}>🚪</Text>
+              <LinearGradient
+                colors={['#6366F1', '#4F46E5', '#4338CA']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.settingIconContainer}
+              >
+                <IconLogout stroke={2} size={22} color="#FFFFFF" />
+              </LinearGradient>
               <View style={styles.settingText}>
                 <Text style={[styles.settingTitle, { color: theme.colors.text }]}>Sign Out</Text>
                 <Text style={[styles.settingDesc, { color: theme.colors.textSecondary }]}>Sign out of your account</Text>
@@ -461,7 +520,7 @@ export default function SettingsScreen({ navigation }) {
             {isSigningOut ? (
               <ActivityIndicator size="small" color={theme.colors.primary} />
             ) : (
-              <Text style={[styles.settingArrow, { color: theme.colors.textTertiary }]}>→</Text>
+              <Ionicons name="chevron-forward" size={20} color={theme.colors.textTertiary} />
             )}
           </TouchableOpacity>
           
@@ -473,7 +532,14 @@ export default function SettingsScreen({ navigation }) {
             disabled={isDeletingAccount}
           >
             <View style={styles.settingInfo}>
-              <Text style={styles.settingIcon}>⚠️</Text>
+              <LinearGradient
+                colors={['#F59E0B', '#D97706', '#B45309']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.settingIconContainer}
+              >
+                <IconUserX stroke={2} size={22} color="#FFFFFF" />
+              </LinearGradient>
               <View style={styles.settingText}>
                 <Text style={[styles.settingTitle, { color: theme.colors.error }]}>Delete Account</Text>
                 <Text style={[styles.settingDesc, { color: theme.colors.textSecondary }]}>Permanently delete your account</Text>
@@ -482,7 +548,7 @@ export default function SettingsScreen({ navigation }) {
             {isDeletingAccount ? (
               <ActivityIndicator size="small" color={theme.colors.error} />
             ) : (
-              <Text style={[styles.settingArrow, { color: theme.colors.textTertiary }]}>→</Text>
+              <Ionicons name="chevron-forward" size={20} color={theme.colors.textTertiary} />
             )}
           </TouchableOpacity>
         </View>
@@ -579,12 +645,17 @@ const styles = StyleSheet.create({
     marginRight: 14,
   },
   settingIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
+    width: 44,
+    height: 44,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 14,
+    marginRight: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
   },
   settingText: {
     flex: 1,
@@ -661,6 +732,19 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginRight: 14,
   },
+  actionIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+    shadowColor: '#8B5CF6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
   actionInfo: {
     flex: 1,
   },
@@ -690,6 +774,19 @@ const styles = StyleSheet.create({
   infoIcon: {
     fontSize: 28,
     marginRight: 14,
+  },
+  infoIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   infoContent: {
     flex: 1,
@@ -787,6 +884,9 @@ const styles = StyleSheet.create({
   },
   profileProviderIcon: {
     fontSize: 14,
+    marginRight: 6,
+  },
+  profileProviderIconContainer: {
     marginRight: 6,
   },
   profileProvider: {

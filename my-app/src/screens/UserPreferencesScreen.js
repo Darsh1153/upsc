@@ -12,6 +12,27 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { 
+  IconTarget,
+  IconSettings,
+  IconChartBar,
+  IconLock,
+  IconSunrise,
+  IconSun,
+  IconCloud,
+  IconSunset,
+  IconMoon,
+  IconBook,
+  IconDeviceTv,
+  IconPencil,
+  IconScale,
+  IconBellFilled,
+  IconTrash,
+  IconDownload,
+  IconCloudUpload,
+  IconClipboardFilled
+} from '../icons/compat';
 import { 
   getUserPreferences, 
   saveUserPreferences,
@@ -86,18 +107,18 @@ export default function UserPreferencesScreen({ navigation }) {
   };
 
   const timeSlots = [
-    { id: 'morning', label: '🌅 Morning (5-9 AM)', icon: '🌅' },
-    { id: 'forenoon', label: '☀️ Forenoon (9 AM-12 PM)', icon: '☀️' },
-    { id: 'afternoon', label: '🌤️ Afternoon (12-5 PM)', icon: '🌤️' },
-    { id: 'evening', label: '🌆 Evening (5-9 PM)', icon: '🌆' },
-    { id: 'night', label: '🌙 Night (9 PM+)', icon: '🌙' },
+    { id: 'morning', label: 'Morning (5-9 AM)', icon: IconSunrise },
+    { id: 'forenoon', label: 'Forenoon (9 AM-12 PM)', icon: IconSun },
+    { id: 'afternoon', label: 'Afternoon (12-5 PM)', icon: IconCloud },
+    { id: 'evening', label: 'Evening (5-9 PM)', icon: IconSunset },
+    { id: 'night', label: 'Night (9 PM+)', icon: IconMoon },
   ];
 
   const studyStyles = [
-    { id: 'reading', label: '📖 Reading-focused', desc: 'Books & notes' },
-    { id: 'videos', label: '📺 Video-focused', desc: 'Online lectures' },
-    { id: 'notes', label: '📝 Notes-focused', desc: 'Self-made notes' },
-    { id: 'balanced', label: '⚖️ Balanced', desc: 'Mix of all' },
+    { id: 'reading', label: 'Reading-focused', desc: 'Books & notes', icon: IconBook },
+    { id: 'videos', label: 'Video-focused', desc: 'Online lectures', icon: IconDeviceTv },
+    { id: 'notes', label: 'Notes-focused', desc: 'Self-made notes', icon: IconPencil },
+    { id: 'balanced', label: 'Balanced', desc: 'Mix of all', icon: IconScale },
   ];
 
   const interestAreas = [
@@ -145,10 +166,10 @@ export default function UserPreferencesScreen({ navigation }) {
   }
 
   const sections = [
-    { id: 'attempt', label: '🎯 Attempt Details', icon: '🎯' },
-    { id: 'customization', label: '⚙️ Customization', icon: '⚙️' },
-    { id: 'goals', label: '📊 Performance Goals', icon: '📊' },
-    { id: 'privacy', label: '🔐 Data & Privacy', icon: '🔐' },
+    { id: 'attempt', label: 'Attempt Details', icon: IconClipboardFilled },
+    { id: 'customization', label: 'Customization', icon: IconSettings },
+    { id: 'goals', label: 'Performance Goals', icon: IconChartBar },
+    { id: 'privacy', label: 'Data & Privacy', icon: IconLock },
   ];
 
   return (
@@ -170,23 +191,57 @@ export default function UserPreferencesScreen({ navigation }) {
           style={styles.tabsContainer}
           contentContainerStyle={styles.tabsContent}
         >
-          {sections.map((section) => (
-            <TouchableOpacity
-              key={section.id}
-              style={[styles.sectionTab, { backgroundColor: theme.colors.surface }, activeSection === section.id && styles.sectionTabActive]}
-              onPress={() => setActiveSection(section.id)}
-            >
-              <Text style={[styles.sectionTabText, { color: theme.colors.text }, activeSection === section.id && styles.sectionTabTextActive]}>
-                {section.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          {sections.map((section) => {
+            const isActive = activeSection === section.id;
+            const SectionIcon = section.icon;
+            return (
+              <TouchableOpacity
+                key={section.id}
+                activeOpacity={0.7}
+                style={styles.sectionTab}
+                onPress={() => setActiveSection(section.id)}
+              >
+                {isActive ? (
+                  <LinearGradient
+                    colors={['#667eea', '#764ba2', '#5a4fcf']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={[StyleSheet.absoluteFill, styles.sectionTabActive]}
+                  />
+                ) : null}
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, zIndex: 1 }}>
+                  {isActive ? (
+                    <View style={styles.sectionTabIconContainer}>
+                      <SectionIcon stroke={2} size={18} color="#FFFFFF" />
+                    </View>
+                  ) : (
+                    <View style={[styles.sectionTabIconContainer, { backgroundColor: isDark ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.05)' }]}>
+                      <SectionIcon stroke={2} size={18} color={theme.colors.primary || '#667eea'} />
+                    </View>
+                  )}
+                  <Text style={[styles.sectionTabText, { color: isActive ? '#FFFFFF' : theme.colors.text }]}>
+                    {section.label}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
 
         {/* Attempt Details Section */}
         {activeSection === 'attempt' && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🎯 Attempt Details</Text>
+            <View style={styles.sectionTitleContainer}>
+              <LinearGradient
+                colors={['#3B82F6', '#2563EB', '#1D4ED8']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.sectionTitleIconContainer}
+              >
+                <IconClipboardFilled stroke={2} size={20} color="#FFFFFF" />
+              </LinearGradient>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Attempt Details</Text>
+            </View>
             
             <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
               <View style={styles.settingRow}>
@@ -219,17 +274,26 @@ export default function UserPreferencesScreen({ navigation }) {
                   <Text style={[styles.settingHint, { color: theme.colors.textSecondary }]}>When are you planning to appear?</Text>
                 </View>
                 <View style={styles.yearPicker}>
-                  {[2025, 2026, 2027, 2028].map((year) => (
-                    <TouchableOpacity
-                      key={year}
-                      style={[styles.yearChip, { backgroundColor: theme.colors.background }, preferences.targetYear === year && styles.yearChipActive]}
-                      onPress={() => updatePreference('targetYear', year)}
-                    >
-                      <Text style={[styles.yearChipText, { color: theme.colors.text }, preferences.targetYear === year && styles.yearChipTextActive]}>
-                        {year}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
+                  {[2025, 2026, 2027, 2028].map((year) => {
+                    const isSelected = preferences.targetYear === year;
+                    return (
+                      <TouchableOpacity
+                        key={year}
+                        style={[
+                          styles.yearChip, 
+                          { backgroundColor: isSelected ? theme.colors.primary : theme.colors.background }
+                        ]}
+                        onPress={() => updatePreference('targetYear', year)}
+                      >
+                        <Text style={[
+                          styles.yearChipText, 
+                          { color: isSelected ? '#FFFFFF' : theme.colors.text }
+                        ]}>
+                          {year}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
                 </View>
               </View>
               
@@ -237,17 +301,24 @@ export default function UserPreferencesScreen({ navigation }) {
               
               <View style={styles.settingRow}>
                 <View style={styles.settingInfo}>
-                  <Text style={styles.settingLabel}>Target Exam</Text>
+                  <Text style={[styles.settingLabel, { color: theme.colors.text }]}>Target Exam</Text>
                 </View>
               </View>
               <View style={styles.optionsRow}>
                 {['CSE', 'IFoS', 'Both'].map((exam) => (
                   <TouchableOpacity
                     key={exam}
-                    style={[styles.optionChip, preferences.targetExam === exam && styles.optionChipActive]}
+                    style={[
+                      styles.optionChip, 
+                      { backgroundColor: theme.colors.background },
+                      preferences.targetExam === exam && { backgroundColor: theme.colors.primary }
+                    ]}
                     onPress={() => updatePreference('targetExam', exam)}
                   >
-                    <Text style={[styles.optionChipText, preferences.targetExam === exam && styles.optionChipTextActive]}>
+                    <Text style={[
+                      styles.optionChipText, 
+                      { color: preferences.targetExam === exam ? '#FFFFFF' : theme.colors.text }
+                    ]}>
                       {exam}
                     </Text>
                   </TouchableOpacity>
@@ -258,14 +329,14 @@ export default function UserPreferencesScreen({ navigation }) {
               
               <View style={styles.settingRow}>
                 <View style={styles.settingInfo}>
-                  <Text style={styles.settingLabel}>Working Professional?</Text>
-                  <Text style={styles.settingHint}>We'll adjust your study plan accordingly</Text>
+                  <Text style={[styles.settingLabel, { color: theme.colors.text }]}>Working Professional?</Text>
+                  <Text style={[styles.settingHint, { color: theme.colors.textSecondary }]}>We'll adjust your study plan accordingly</Text>
                 </View>
                 <Switch
                   value={preferences.isWorkingProfessional}
                   onValueChange={(value) => updatePreference('isWorkingProfessional', value)}
-                  trackColor={{ false: '#E5E5EA', true: '#34C759' }}
-                  thumbColor="#FFFFFF"
+                  trackColor={{ false: theme.colors.border, true: '#34C759' }}
+                  thumbColor={isDark ? '#FFFFFF' : '#FFFFFF'}
                 />
               </View>
               
@@ -273,21 +344,29 @@ export default function UserPreferencesScreen({ navigation }) {
               
               <View style={styles.settingRow}>
                 <View style={styles.settingInfo}>
-                  <Text style={styles.settingLabel}>Daily Study Hours</Text>
-                  <Text style={styles.settingHint}>How many hours can you dedicate?</Text>
+                  <Text style={[styles.settingLabel, { color: theme.colors.text }]}>Daily Study Hours</Text>
+                  <Text style={[styles.settingHint, { color: theme.colors.textSecondary }]}>How many hours can you dedicate?</Text>
                 </View>
                 <View style={styles.sliderContainer}>
-                  <Text style={styles.sliderValue}>{preferences.availableHoursDaily || 6}h</Text>
+                  <Text style={[styles.sliderValue, { color: theme.colors.primary }]}>{preferences.availableHoursDaily || 6}h</Text>
                 </View>
               </View>
               <View style={styles.hoursSlider}>
                 {[2, 4, 6, 8, 10, 12].map((hours) => (
                   <TouchableOpacity
                     key={hours}
-                    style={[styles.hourChip, preferences.availableHoursDaily === hours && styles.hourChipActive]}
+                    style={[
+                      styles.hourChip, 
+                      { backgroundColor: theme.colors.background },
+                      preferences.availableHoursDaily === hours && { backgroundColor: theme.colors.primary }
+                    ]}
                     onPress={() => updatePreference('availableHoursDaily', hours)}
                   >
-                    <Text style={[styles.hourChipText, preferences.availableHoursDaily === hours && styles.hourChipTextActive]}>
+                    <Text style={[
+                      styles.hourChipText, 
+                      { color: theme.colors.text },
+                      preferences.availableHoursDaily === hours && styles.hourChipTextActive
+                    ]}>
                       {hours}h
                     </Text>
                   </TouchableOpacity>
@@ -296,26 +375,48 @@ export default function UserPreferencesScreen({ navigation }) {
               
               <View style={styles.divider} />
               
-              <Text style={[styles.settingLabel, { marginBottom: 12 }]}>Preferred Time Slots</Text>
+              <Text style={[styles.settingLabel, { marginBottom: 12, color: theme.colors.text }]}>Preferred Time Slots</Text>
               <View style={styles.timeSlotsGrid}>
-                {timeSlots.map((slot) => (
-                  <TouchableOpacity
-                    key={slot.id}
-                    style={[
-                      styles.timeSlotChip,
-                      preferences.preferredTimeSlots?.includes(slot.id) && styles.timeSlotChipActive
-                    ]}
-                    onPress={() => toggleTimeSlot(slot.id)}
-                  >
-                    <Text style={styles.timeSlotIcon}>{slot.icon}</Text>
-                    <Text style={[
-                      styles.timeSlotText,
-                      preferences.preferredTimeSlots?.includes(slot.id) && styles.timeSlotTextActive
-                    ]}>
-                      {slot.id.charAt(0).toUpperCase() + slot.id.slice(1)}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                {timeSlots.map((slot) => {
+                  const isSelected = preferences.preferredTimeSlots?.includes(slot.id);
+                  const SlotIcon = slot.icon;
+                  return (
+                    <TouchableOpacity
+                      key={slot.id}
+                      activeOpacity={0.7}
+                      style={[
+                        styles.timeSlotChip,
+                        { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+                        isSelected && { borderColor: '#667eea' }
+                      ]}
+                      onPress={() => toggleTimeSlot(slot.id)}
+                    >
+                      {isSelected ? (
+                        <LinearGradient
+                          colors={['#667eea', '#764ba2', '#5a4fcf']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={styles.timeSlotIconContainer}
+                        >
+                          <SlotIcon stroke={2.5} size={22} color="#FFFFFF" />
+                        </LinearGradient>
+                      ) : (
+                        <View style={[styles.timeSlotIconContainer, { backgroundColor: isDark ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.05)' }]}>
+                          <SlotIcon stroke={2} size={22} color={theme.colors.primary || '#667eea'} />
+                        </View>
+                      )}
+                      <Text style={[
+                        styles.timeSlotText,
+                        { 
+                          color: isSelected ? theme.colors.primary : theme.colors.text,
+                          fontWeight: isSelected ? '600' : '500'
+                        }
+                      ]}>
+                        {slot.label.split(' ')[0]}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </View>
           </View>
@@ -324,72 +425,128 @@ export default function UserPreferencesScreen({ navigation }) {
         {/* Customization Section */}
         {activeSection === 'customization' && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>⚙️ Customization</Text>
+            <View style={styles.sectionTitleContainer}>
+              <LinearGradient
+                colors={['#8B5CF6', '#7C3AED', '#6D28D9']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.sectionTitleIconContainer}
+              >
+                <IconSettings stroke={2} size={20} color="#FFFFFF" />
+              </LinearGradient>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Customization</Text>
+            </View>
             
             <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
               <TouchableOpacity style={styles.settingRow} onPress={() => setShowOptionalPicker(true)}>
                 <View style={styles.settingInfo}>
-                  <Text style={styles.settingLabel}>Optional Subject</Text>
-                  <Text style={styles.settingHint}>
+                  <Text style={[styles.settingLabel, { color: theme.colors.text }]}>Optional Subject</Text>
+                  <Text style={[styles.settingHint, { color: theme.colors.textSecondary }]}>
                     {preferences.optionalSubject || 'Tap to select'}
                   </Text>
                 </View>
-                <Text style={styles.settingArrow}>→</Text>
+                <Text style={[styles.settingArrow, { color: theme.colors.border }]}>→</Text>
               </TouchableOpacity>
               
               <View style={styles.divider} />
               
-              <Text style={[styles.settingLabel, { marginBottom: 12, marginTop: 8 }]}>Interest Areas</Text>
-              <Text style={styles.settingHint}>Select subjects you want to focus on</Text>
+              <Text style={[styles.settingLabel, { marginBottom: 12, marginTop: 8, color: theme.colors.text }]}>Interest Areas</Text>
+              <Text style={[styles.settingHint, { color: theme.colors.textSecondary }]}>Select subjects you want to focus on</Text>
               <View style={styles.interestGrid}>
-                {interestAreas.map((area) => (
-                  <TouchableOpacity
-                    key={area}
-                    style={[
-                      styles.interestChip,
-                      preferences.interestAreas?.includes(area) && styles.interestChipActive
-                    ]}
-                    onPress={() => toggleInterest(area)}
-                  >
-                    <Text style={[
-                      styles.interestChipText,
-                      preferences.interestAreas?.includes(area) && styles.interestChipTextActive
-                    ]}>
-                      {area}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                {interestAreas.map((area) => {
+                  const isSelected = preferences.interestAreas?.includes(area);
+                  return (
+                    <TouchableOpacity
+                      key={area}
+                      activeOpacity={0.7}
+                      style={[
+                        styles.interestChip,
+                        { backgroundColor: theme.colors.background },
+                        isSelected && { backgroundColor: '#34C759' }
+                      ]}
+                      onPress={() => toggleInterest(area)}
+                    >
+                      <Text style={[
+                        styles.interestChipText,
+                        { color: theme.colors.text },
+                        isSelected && styles.interestChipTextActive
+                      ]}>
+                        {area}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
               
               <View style={styles.divider} />
               
-              <Text style={[styles.settingLabel, { marginBottom: 12, marginTop: 8 }]}>Study Style</Text>
+              <Text style={[styles.settingLabel, { marginBottom: 12, marginTop: 8, color: theme.colors.text }]}>Study Style</Text>
               <View style={styles.studyStyleGrid}>
-                {studyStyles.map((style) => (
-                  <TouchableOpacity
-                    key={style.id}
-                    style={[
-                      styles.studyStyleCard,
-                      preferences.studyStyle === style.id && styles.studyStyleCardActive
-                    ]}
-                    onPress={() => updatePreference('studyStyle', style.id)}
-                  >
-                    <Text style={styles.studyStyleLabel}>{style.label}</Text>
-                    <Text style={styles.studyStyleDesc}>{style.desc}</Text>
-                  </TouchableOpacity>
-                ))}
+                {studyStyles.map((style) => {
+                  const isSelected = preferences.studyStyle === style.id;
+                  const StyleIcon = style.icon;
+                  return (
+                    <TouchableOpacity
+                      key={style.id}
+                      activeOpacity={0.7}
+                      style={[
+                        styles.studyStyleCard,
+                        { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+                        isSelected && { borderColor: '#667eea' }
+                      ]}
+                      onPress={() => updatePreference('studyStyle', style.id)}
+                    >
+                      {isSelected ? (
+                        <LinearGradient
+                          colors={['#667eea', '#764ba2', '#5a4fcf']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={styles.studyStyleIconContainer}
+                        >
+                          <StyleIcon stroke={2.5} size={24} color="#FFFFFF" />
+                        </LinearGradient>
+                      ) : (
+                        <View style={[styles.studyStyleIconContainer, { backgroundColor: isDark ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.05)' }]}>
+                          <StyleIcon stroke={2} size={24} color={theme.colors.primary || '#667eea'} />
+                        </View>
+                      )}
+                      <Text style={[
+                        styles.studyStyleLabel, 
+                        { 
+                          color: isSelected ? theme.colors.primary : theme.colors.text,
+                          fontWeight: isSelected ? '700' : '600'
+                        }
+                      ]}>
+                        {style.label}
+                      </Text>
+                      <Text style={[styles.studyStyleDesc, { color: theme.colors.textSecondary }]}>
+                        {style.desc}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </View>
             
             <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
               <View style={styles.settingRow}>
                 <View style={styles.settingInfo}>
-                  <Text style={[styles.settingLabel, { color: theme.colors.text }]}>🔔 Daily Reminders</Text>
+                  <View style={styles.settingLabelRow}>
+                    <LinearGradient
+                      colors={['#3B82F6', '#2563EB', '#1D4ED8']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.settingIconContainer}
+                    >
+                      <IconBellFilled size={20} color="#FFFFFF" />
+                    </LinearGradient>
+                    <Text style={[styles.settingLabel, { color: theme.colors.text }]}>Daily Reminders</Text>
+                  </View>
                 </View>
                 <Switch
                   value={preferences.dailyReminderEnabled}
                   onValueChange={(value) => updatePreference('dailyReminderEnabled', value)}
-                  trackColor={{ false: '#E5E5EA', true: '#34C759' }}
+                  trackColor={{ false: theme.colors.border, true: '#34C759' }}
                   thumbColor="#FFFFFF"
                 />
               </View>
@@ -399,9 +556,9 @@ export default function UserPreferencesScreen({ navigation }) {
                   <View style={styles.divider} />
                   <TouchableOpacity style={styles.settingRow} onPress={() => setShowTimePicker(true)}>
                     <View style={styles.settingInfo}>
-                      <Text style={styles.settingLabel}>Reminder Time</Text>
+                      <Text style={[styles.settingLabel, { color: theme.colors.text }]}>Reminder Time</Text>
                     </View>
-                    <Text style={styles.timeValue}>
+                    <Text style={[styles.timeValue, { color: theme.colors.primary }]}>
                       {formatTime(preferences.dailyReminderTime || '07:00')}
                     </Text>
                   </TouchableOpacity>
@@ -412,12 +569,12 @@ export default function UserPreferencesScreen({ navigation }) {
               
               <View style={styles.settingRow}>
                 <View style={styles.settingInfo}>
-                  <Text style={styles.settingLabel}>🔄 Revision Reminders</Text>
+                  <Text style={[styles.settingLabel, { color: theme.colors.text }]}>Revision Reminders</Text>
                 </View>
                 <Switch
                   value={preferences.revisionRemindersEnabled}
                   onValueChange={(value) => updatePreference('revisionRemindersEnabled', value)}
-                  trackColor={{ false: '#E5E5EA', true: '#34C759' }}
+                  trackColor={{ false: theme.colors.border, true: '#34C759' }}
                   thumbColor="#FFFFFF"
                 />
               </View>
@@ -426,12 +583,12 @@ export default function UserPreferencesScreen({ navigation }) {
               
               <View style={styles.settingRow}>
                 <View style={styles.settingInfo}>
-                  <Text style={styles.settingLabel}>📰 Current Affairs Reminder</Text>
+                  <Text style={[styles.settingLabel, { color: theme.colors.text }]}>Current Affairs Reminder</Text>
                 </View>
                 <Switch
                   value={preferences.currentAffairsReminderEnabled}
                   onValueChange={(value) => updatePreference('currentAffairsReminderEnabled', value)}
-                  trackColor={{ false: '#E5E5EA', true: '#34C759' }}
+                  trackColor={{ false: theme.colors.border, true: '#34C759' }}
                   thumbColor="#FFFFFF"
                 />
               </View>
@@ -442,22 +599,40 @@ export default function UserPreferencesScreen({ navigation }) {
         {/* Performance Goals Section */}
         {activeSection === 'goals' && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>📊 Performance Goals</Text>
+            <View style={styles.sectionTitleContainer}>
+              <LinearGradient
+                colors={['#10B981', '#059669', '#047857']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.sectionTitleIconContainer}
+              >
+                <IconChartBar stroke={2} size={20} color="#FFFFFF" />
+              </LinearGradient>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Performance Goals</Text>
+            </View>
             
             <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
               <View style={styles.goalRow}>
                 <View style={styles.goalInfo}>
-                  <Text style={styles.goalLabel}>Daily Target Hours</Text>
-                  <Text style={styles.goalValue}>{preferences.dailyTargetHours || 6}h</Text>
+                  <Text style={[styles.goalLabel, { color: theme.colors.text }]}>Daily Target Hours</Text>
+                  <Text style={[styles.goalValue, { color: theme.colors.primary }]}>{preferences.dailyTargetHours || 6}h</Text>
                 </View>
                 <View style={styles.goalSlider}>
                   {[4, 6, 8, 10].map((hours) => (
                     <TouchableOpacity
                       key={hours}
-                      style={[styles.goalChip, preferences.dailyTargetHours === hours && styles.goalChipActive]}
+                      style={[
+                        styles.goalChip, 
+                        { backgroundColor: theme.colors.background },
+                        preferences.dailyTargetHours === hours && { backgroundColor: theme.colors.primary }
+                      ]}
                       onPress={() => updatePreference('dailyTargetHours', hours)}
                     >
-                      <Text style={[styles.goalChipText, preferences.dailyTargetHours === hours && styles.goalChipTextActive]}>
+                      <Text style={[
+                        styles.goalChipText, 
+                        { color: theme.colors.text },
+                        preferences.dailyTargetHours === hours && styles.goalChipTextActive
+                      ]}>
                         {hours}h
                       </Text>
                     </TouchableOpacity>
@@ -469,17 +644,25 @@ export default function UserPreferencesScreen({ navigation }) {
               
               <View style={styles.goalRow}>
                 <View style={styles.goalInfo}>
-                  <Text style={styles.goalLabel}>Weekly Completion %</Text>
-                  <Text style={styles.goalValue}>{preferences.weeklyCompletionTarget || 80}%</Text>
+                  <Text style={[styles.goalLabel, { color: theme.colors.text }]}>Weekly Completion %</Text>
+                  <Text style={[styles.goalValue, { color: theme.colors.primary }]}>{preferences.weeklyCompletionTarget || 80}%</Text>
                 </View>
                 <View style={styles.goalSlider}>
                   {[60, 70, 80, 90, 100].map((pct) => (
                     <TouchableOpacity
                       key={pct}
-                      style={[styles.goalChip, preferences.weeklyCompletionTarget === pct && styles.goalChipActive]}
+                      style={[
+                        styles.goalChip, 
+                        { backgroundColor: theme.colors.background },
+                        preferences.weeklyCompletionTarget === pct && { backgroundColor: theme.colors.primary }
+                      ]}
                       onPress={() => updatePreference('weeklyCompletionTarget', pct)}
                     >
-                      <Text style={[styles.goalChipText, preferences.weeklyCompletionTarget === pct && styles.goalChipTextActive]}>
+                      <Text style={[
+                        styles.goalChipText, 
+                        { color: theme.colors.text },
+                        preferences.weeklyCompletionTarget === pct && styles.goalChipTextActive
+                      ]}>
                         {pct}%
                       </Text>
                     </TouchableOpacity>
@@ -491,17 +674,25 @@ export default function UserPreferencesScreen({ navigation }) {
               
               <View style={styles.goalRow}>
                 <View style={styles.goalInfo}>
-                  <Text style={styles.goalLabel}>Mock Tests Per Week</Text>
-                  <Text style={styles.goalValue}>{preferences.mockTestsPerWeek || 2}</Text>
+                  <Text style={[styles.goalLabel, { color: theme.colors.text }]}>Mock Tests Per Week</Text>
+                  <Text style={[styles.goalValue, { color: theme.colors.primary }]}>{preferences.mockTestsPerWeek || 2}</Text>
                 </View>
                 <View style={styles.goalSlider}>
                   {[1, 2, 3, 4, 5].map((num) => (
                     <TouchableOpacity
                       key={num}
-                      style={[styles.goalChip, preferences.mockTestsPerWeek === num && styles.goalChipActive]}
+                      style={[
+                        styles.goalChip, 
+                        { backgroundColor: theme.colors.background },
+                        preferences.mockTestsPerWeek === num && { backgroundColor: theme.colors.primary }
+                      ]}
                       onPress={() => updatePreference('mockTestsPerWeek', num)}
                     >
-                      <Text style={[styles.goalChipText, preferences.mockTestsPerWeek === num && styles.goalChipTextActive]}>
+                      <Text style={[
+                        styles.goalChipText, 
+                        { color: theme.colors.text },
+                        preferences.mockTestsPerWeek === num && styles.goalChipTextActive
+                      ]}>
                         {num}
                       </Text>
                     </TouchableOpacity>
@@ -513,17 +704,25 @@ export default function UserPreferencesScreen({ navigation }) {
               
               <View style={styles.goalRow}>
                 <View style={styles.goalInfo}>
-                  <Text style={styles.goalLabel}>Monthly Revision Target</Text>
-                  <Text style={styles.goalValue}>{preferences.monthlyRevisionTarget || 4} topics</Text>
+                  <Text style={[styles.goalLabel, { color: theme.colors.text }]}>Monthly Revision Target</Text>
+                  <Text style={[styles.goalValue, { color: theme.colors.primary }]}>{preferences.monthlyRevisionTarget || 4} topics</Text>
                 </View>
                 <View style={styles.goalSlider}>
                   {[2, 4, 6, 8].map((num) => (
                     <TouchableOpacity
                       key={num}
-                      style={[styles.goalChip, preferences.monthlyRevisionTarget === num && styles.goalChipActive]}
+                      style={[
+                        styles.goalChip, 
+                        { backgroundColor: theme.colors.background },
+                        preferences.monthlyRevisionTarget === num && { backgroundColor: theme.colors.primary }
+                      ]}
                       onPress={() => updatePreference('monthlyRevisionTarget', num)}
                     >
-                      <Text style={[styles.goalChipText, preferences.monthlyRevisionTarget === num && styles.goalChipTextActive]}>
+                      <Text style={[
+                        styles.goalChipText, 
+                        { color: theme.colors.text },
+                        preferences.monthlyRevisionTarget === num && styles.goalChipTextActive
+                      ]}>
                         {num}
                       </Text>
                     </TouchableOpacity>
@@ -537,13 +736,35 @@ export default function UserPreferencesScreen({ navigation }) {
         {/* Privacy & Data Section */}
         {activeSection === 'privacy' && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🔐 Data & Privacy</Text>
+            <View style={styles.sectionTitleContainer}>
+              <LinearGradient
+                colors={['#F59E0B', '#D97706', '#B45309']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.sectionTitleIconContainer}
+              >
+                <IconLock stroke={2} size={20} color="#FFFFFF" />
+              </LinearGradient>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Data & Privacy</Text>
+            </View>
             
             <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
               <View style={styles.settingRow}>
                 <View style={styles.settingInfo}>
-                  <Text style={[styles.settingLabel, { color: theme.colors.text }]}>☁️ Cloud Sync</Text>
-                  <Text style={[styles.settingHint, { color: theme.colors.textSecondary }]}>Sync progress across devices</Text>
+                  <View style={styles.settingLabelRow}>
+                    <LinearGradient
+                      colors={['#60A5FA', '#3B82F6', '#2563EB']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.settingIconContainer}
+                    >
+                      <IconCloudUpload stroke={2} size={24} color="#FFFFFF" />
+                    </LinearGradient>
+                    <View>
+                      <Text style={[styles.settingLabel, { color: theme.colors.text }]}>Cloud Sync</Text>
+                      <Text style={[styles.settingHint, { color: theme.colors.textSecondary }]}>Sync progress across devices</Text>
+                    </View>
+                  </View>
                 </View>
                 <Switch
                   value={preferences.cloudSyncEnabled}
@@ -554,8 +775,19 @@ export default function UserPreferencesScreen({ navigation }) {
               </View>
             </View>
             
-            <TouchableOpacity style={[styles.actionCard, { backgroundColor: theme.colors.surface }]} onPress={handleExportData}>
-              <Text style={styles.actionIcon}>📤</Text>
+            <TouchableOpacity 
+              activeOpacity={0.7}
+              style={[styles.actionCard, { backgroundColor: theme.colors.surface }]} 
+              onPress={handleExportData}
+            >
+              <LinearGradient
+                colors={['#10B981', '#059669', '#047857']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.actionIconContainer}
+              >
+                <IconDownload stroke={2} size={24} color="#FFFFFF" />
+              </LinearGradient>
               <View style={styles.actionInfo}>
                 <Text style={[styles.actionLabel, { color: theme.colors.text }]}>Export Progress</Text>
                 <Text style={[styles.actionHint, { color: theme.colors.textSecondary }]}>Download your data as JSON</Text>
@@ -563,8 +795,19 @@ export default function UserPreferencesScreen({ navigation }) {
               <Text style={[styles.actionArrow, { color: theme.colors.border }]}>→</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={[styles.actionCard, styles.dangerCard, { backgroundColor: isDark ? '#3A1A1A' : '#FFF5F5' }]} onPress={handleResetRoadmap}>
-              <Text style={styles.actionIcon}>🗑️</Text>
+            <TouchableOpacity 
+              activeOpacity={0.7}
+              style={[styles.actionCard, styles.dangerCard, { backgroundColor: isDark ? '#3A1A1A' : '#FFF5F5' }]} 
+              onPress={handleResetRoadmap}
+            >
+              <LinearGradient
+                colors={['#EF4444', '#DC2626', '#B91C1C']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.actionIconContainer}
+              >
+                <IconTrash stroke={2} size={24} color="#FFFFFF" />
+              </LinearGradient>
               <View style={styles.actionInfo}>
                 <Text style={[styles.actionLabel, styles.dangerText]}>Reset Roadmap</Text>
                 <Text style={[styles.actionHint, { color: theme.colors.textSecondary }]}>Clear all progress and start fresh</Text>
@@ -628,8 +871,11 @@ export default function UserPreferencesScreen({ navigation }) {
                   key={time}
                   style={[
                     styles.timeOption,
-                    { backgroundColor: theme.colors.background },
-                    preferences.dailyReminderTime === time && styles.timeOptionActive
+                    { 
+                      backgroundColor: preferences.dailyReminderTime === time 
+                        ? theme.colors.primary 
+                        : theme.colors.background 
+                    }
                   ]}
                   onPress={() => {
                     updatePreference('dailyReminderTime', time);
@@ -638,8 +884,9 @@ export default function UserPreferencesScreen({ navigation }) {
                 >
                   <Text style={[
                     styles.timeOptionText,
-                    { color: theme.colors.text },
-                    preferences.dailyReminderTime === time && styles.timeOptionTextActive
+                    { 
+                      color: preferences.dailyReminderTime === time ? '#FFFFFF' : theme.colors.text 
+                    }
                   ]}>
                     {formatTime(time)}
                   </Text>
@@ -690,7 +937,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 34,
     fontWeight: '700',
-    color: '#1C1C1E',
     letterSpacing: -0.8,
   },
   subtitle: {
@@ -705,34 +951,52 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sectionTab: {
-    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: '#FFF',
     marginRight: 8,
+    gap: 8,
   },
   sectionTabActive: {
-    backgroundColor: '#007AFF',
+    borderRadius: 20,
+  },
+  sectionTabIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   sectionTabText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#1C1C1E',
   },
   sectionTabTextActive: {
-    color: '#FFF',
+    color: '#FFFFFF',
   },
   section: {
     marginBottom: 24,
   },
+  sectionTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 10,
+  },
+  sectionTitleIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#1C1C1E',
-    marginBottom: 12,
   },
   card: {
-    backgroundColor: '#FFF',
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -751,23 +1015,31 @@ const styles = StyleSheet.create({
   settingInfo: {
     flex: 1,
   },
+  settingLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  settingIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   settingLabel: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#1C1C1E',
   },
   settingHint: {
     fontSize: 13,
-    color: '#8E8E93',
     marginTop: 2,
   },
   settingArrow: {
     fontSize: 18,
-    color: '#C7C7CC',
   },
   divider: {
     height: 1,
-    backgroundColor: '#E5E5EA',
     marginVertical: 12,
   },
   counterContainer: {
@@ -779,19 +1051,16 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#F2F2F7',
     alignItems: 'center',
     justifyContent: 'center',
   },
   counterButtonText: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#007AFF',
   },
   counterValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#1C1C1E',
     minWidth: 30,
     textAlign: 'center',
   },
@@ -803,18 +1072,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: '#F2F2F7',
   },
   yearChipActive: {
-    backgroundColor: '#007AFF',
+    // Handled inline
   },
   yearChipText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1C1C1E',
   },
   yearChipTextActive: {
-    color: '#FFF',
+    color: '#FFFFFF',
   },
   optionsRow: {
     flexDirection: 'row',
@@ -825,19 +1092,17 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: 10,
-    backgroundColor: '#F2F2F7',
     alignItems: 'center',
   },
   optionChipActive: {
-    backgroundColor: '#007AFF',
+    // Handled inline
   },
   optionChipText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#1C1C1E',
   },
   optionChipTextActive: {
-    color: '#FFF',
+    color: '#FFFFFF',
   },
   sliderContainer: {
     alignItems: 'flex-end',
@@ -845,7 +1110,6 @@ const styles = StyleSheet.create({
   sliderValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#007AFF',
   },
   hoursSlider: {
     flexDirection: 'row',
@@ -856,18 +1120,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: '#F2F2F7',
   },
   hourChipActive: {
-    backgroundColor: '#007AFF',
+    // Handled inline
   },
   hourChipText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1C1C1E',
   },
   hourChipTextActive: {
-    color: '#FFF',
+    color: '#FFFFFF',
   },
   timeSlotsGrid: {
     flexDirection: 'row',
@@ -880,25 +1142,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: '#F2F2F7',
     gap: 6,
+    borderWidth: 2,
   },
   timeSlotChipActive: {
-    backgroundColor: '#E5F3FF',
-    borderWidth: 2,
-    borderColor: '#007AFF',
+    // Handled inline
   },
-  timeSlotIcon: {
-    fontSize: 14,
+  timeSlotIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   timeSlotText: {
     fontSize: 13,
     fontWeight: '500',
-    color: '#1C1C1E',
-  },
-  timeSlotTextActive: {
-    color: '#007AFF',
-    fontWeight: '600',
   },
   interestGrid: {
     flexDirection: 'row',
@@ -910,46 +1169,50 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#F2F2F7',
   },
   interestChipActive: {
-    backgroundColor: '#34C759',
+    // Handled inline
   },
   interestChipText: {
     fontSize: 13,
     fontWeight: '500',
-    color: '#1C1C1E',
   },
   interestChipTextActive: {
-    color: '#FFF',
+    color: '#FFFFFF',
   },
   studyStyleGrid: {
     gap: 8,
   },
   studyStyleCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 14,
     borderRadius: 12,
-    backgroundColor: '#F2F2F7',
+    gap: 12,
+    borderWidth: 2,
   },
   studyStyleCardActive: {
-    backgroundColor: '#E5F3FF',
-    borderWidth: 2,
-    borderColor: '#007AFF',
+    // Handled inline
+  },
+  studyStyleIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   studyStyleLabel: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#1C1C1E',
+    flex: 1,
   },
   studyStyleDesc: {
     fontSize: 13,
-    color: '#8E8E93',
     marginTop: 2,
   },
   timeValue: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#007AFF',
   },
   goalRow: {
     marginBottom: 16,
@@ -963,12 +1226,10 @@ const styles = StyleSheet.create({
   goalLabel: {
     fontSize: 15,
     fontWeight: '500',
-    color: '#1C1C1E',
   },
   goalValue: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#007AFF',
   },
   goalSlider: {
     flexDirection: 'row',
@@ -978,19 +1239,17 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: '#F2F2F7',
     alignItems: 'center',
   },
   goalChipActive: {
-    backgroundColor: '#007AFF',
+    // Handled inline
   },
   goalChipText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1C1C1E',
   },
   goalChipTextActive: {
-    color: '#FFF',
+    color: '#FFFFFF',
   },
   actionCard: {
     flexDirection: 'row',
@@ -1008,8 +1267,12 @@ const styles = StyleSheet.create({
   dangerCard: {
     backgroundColor: '#FFF5F5',
   },
-  actionIcon: {
-    fontSize: 24,
+  actionIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 14,
   },
   actionInfo: {
@@ -1018,7 +1281,6 @@ const styles = StyleSheet.create({
   actionLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1C1C1E',
   },
   dangerText: {
     color: '#FF3B30',
@@ -1047,7 +1309,6 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#1C1C1E',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -1070,7 +1331,6 @@ const styles = StyleSheet.create({
   },
   optionalItemText: {
     fontSize: 16,
-    color: '#1C1C1E',
   },
   optionalItemTextActive: {
     color: '#007AFF',
@@ -1102,19 +1362,11 @@ const styles = StyleSheet.create({
     width: '30%',
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: '#F2F2F7',
     alignItems: 'center',
-  },
-  timeOptionActive: {
-    backgroundColor: '#007AFF',
   },
   timeOptionText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#1C1C1E',
-  },
-  timeOptionTextActive: {
-    color: '#FFF',
   },
 });
 

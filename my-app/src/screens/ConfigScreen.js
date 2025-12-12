@@ -15,6 +15,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { 
+  IconSparkles,
+  IconFileTextFilled,
+  IconCloudUpload,
+  IconClipboardFilled,
+  IconSearch,
+  IconX
+} from '../icons/compat';
 import { pickPDF, processPDF, processManualText } from '../utils/pdfParser';
 import { useTheme } from '../features/Reference/theme/ThemeContext';
 import { useWebStyles } from '../components/WebContainer';
@@ -168,20 +176,30 @@ export default function ConfigScreen({ navigation, route }) {
         {/* Mode Selector */}
         <View style={[styles.modeSelector, { backgroundColor: theme.colors.surface }]}>
           <TouchableOpacity
+            activeOpacity={0.7}
             style={[styles.modeTab, mode === 'generate' && { backgroundColor: theme.colors.primary }]}
             onPress={() => setMode('generate')}
           >
-            <Text style={styles.modeIcon}>✨</Text>
-            <Text style={[styles.modeText, { color: theme.colors.textSecondary }, mode === 'generate' && styles.modeTextActive]}>
+            <IconSparkles
+              size={18}
+              color={mode === 'generate' ? '#FFFFFF' : (theme.colors.primary || '#667eea')}
+              style={mode === 'generate' ? styles.sparkleIconActive : styles.sparkleIconInactive}
+            />
+            <Text style={[styles.modeText, { color: mode === 'generate' ? '#FFFFFF' : theme.colors.textSecondary }]}>
               Generate
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
+            activeOpacity={0.7}
             style={[styles.modeTab, mode === 'upload' && { backgroundColor: theme.colors.primary }]}
             onPress={() => setMode('upload')}
           >
-            <Text style={styles.modeIcon}>📄</Text>
-            <Text style={[styles.modeText, { color: theme.colors.textSecondary }, mode === 'upload' && styles.modeTextActive]}>
+            <IconCloudUpload
+              size={24}
+              color={mode === 'upload' ? '#FFFFFF' : (theme.colors.primary || '#667eea')}
+              style={mode === 'upload' ? styles.uploadIconActive : styles.uploadIconInactive}
+            />
+            <Text style={[styles.modeText, { color: mode === 'upload' ? '#FFFFFF' : theme.colors.textSecondary }]}>
               Upload
             </Text>
           </TouchableOpacity>
@@ -334,7 +352,10 @@ export default function ConfigScreen({ navigation, route }) {
                 end={{ x: 1, y: 0 }}
                 style={styles.buttonGradient}
               >
-                <Text style={styles.buttonText}>Generate Questions ✨</Text>
+                <View style={styles.buttonContent}>
+                  <IconSparkles size={28} color="#FFFFFF" style={styles.sparkleIconActive} />
+                  <Text style={styles.buttonText}>Generate Questions</Text>
+                </View>
               </LinearGradient>
             </TouchableOpacity>
           </>
@@ -350,7 +371,14 @@ export default function ConfigScreen({ navigation, route }) {
             >
               {selectedFile ? (
                 <View style={styles.fileInfo}>
-                  <Text style={styles.fileIcon}>📄</Text>
+                  <LinearGradient
+                    colors={['#10B981', '#059669', '#047857']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.fileIconContainer}
+                  >
+                    <IconFileTextFilled size={24} color="#FFFFFF" />
+                  </LinearGradient>
                   <View style={styles.fileDetails}>
                     <Text style={[styles.fileName, { color: theme.colors.text }]} numberOfLines={1}>
                       {selectedFile.name}
@@ -360,15 +388,20 @@ export default function ConfigScreen({ navigation, route }) {
                     </Text>
                   </View>
                   <TouchableOpacity
+                    activeOpacity={0.7}
                     style={[styles.removeFile, { backgroundColor: theme.colors.errorBg }]}
                     onPress={() => setSelectedFile(null)}
                   >
-                    <Text style={[styles.removeFileText, { color: theme.colors.error }]}>✕</Text>
+                    <IconX stroke={2} size={18} color={theme.colors.error} />
                   </TouchableOpacity>
                 </View>
               ) : (
                 <View style={styles.uploadPlaceholder}>
-                  <Text style={styles.uploadIcon}>📤</Text>
+                  <IconCloudUpload
+                    size={48}
+                    color={theme.colors.primary || '#3B82F6'}
+                    style={styles.uploadIconLarge}
+                  />
                   <Text style={[styles.uploadTitle, { color: theme.colors.text }]}>Tap to Select PDF</Text>
                   <Text style={[styles.uploadDesc, { color: theme.colors.textSecondary }]}>
                     We'll scan and extract MCQs automatically
@@ -386,10 +419,18 @@ export default function ConfigScreen({ navigation, route }) {
 
             {/* Paste Text Button */}
             <TouchableOpacity
+              activeOpacity={0.7}
               style={[styles.pasteButton, { backgroundColor: theme.colors.surface }]}
               onPress={() => setShowTextModal(true)}
             >
-              <Text style={styles.pasteIcon}>📋</Text>
+              <LinearGradient
+                colors={['#8B5CF6', '#7C3AED', '#6D28D9']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.pasteIconContainer}
+              >
+                <IconClipboardFilled size={24} color="#FFFFFF" />
+              </LinearGradient>
               <View style={styles.pasteInfo}>
                 <Text style={[styles.pasteTitle, { color: theme.colors.text }]}>Paste Text</Text>
                 <Text style={[styles.pasteDesc, { color: theme.colors.textSecondary }]}>Copy MCQs from PDF and paste here</Text>
@@ -399,7 +440,17 @@ export default function ConfigScreen({ navigation, route }) {
 
             {/* PDF Format Info */}
             <View style={[styles.infoCard, { backgroundColor: theme.colors.infoBg }]}>
-              <Text style={[styles.infoTitle, { color: theme.colors.info }]}>📋 Supported Formats</Text>
+              <View style={styles.infoTitleContainer}>
+                <LinearGradient
+                  colors={['#3B82F6', '#2563EB', '#1D4ED8']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.infoTitleIconContainer}
+                >
+                  <IconClipboardFilled size={18} color="#FFFFFF" />
+                </LinearGradient>
+                <Text style={[styles.infoTitle, { color: theme.colors.info }]}>Supported Formats</Text>
+              </View>
               <Text style={[styles.infoText, { color: theme.colors.text }]}>
                 MCQs should follow this format:
               </Text>
@@ -463,9 +514,12 @@ export default function ConfigScreen({ navigation, route }) {
                 end={{ x: 1, y: 0 }}
                 style={styles.buttonGradient}
               >
-                <Text style={styles.buttonText}>
-                  {isProcessing ? 'Scanning...' : 'Scan PDF & Extract 🔍'}
-                </Text>
+                <View style={styles.buttonContent}>
+                  {!isProcessing && <IconSearch stroke={2.5} size={18} color="#FFFFFF" />}
+                  <Text style={styles.buttonText}>
+                    {isProcessing ? 'Scanning...' : 'Scan PDF & Extract'}
+                  </Text>
+                </View>
               </LinearGradient>
             </TouchableOpacity>
           </>
@@ -581,12 +635,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 14,
     borderRadius: 12,
+    gap: 8,
   },
   modeTabActive: {
     backgroundColor: '#007AFF',
   },
-  modeIcon: {
-    fontSize: 18,
+  modeIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 8,
   },
   modeText: {
@@ -720,6 +779,11 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: 'center',
   },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   buttonText: {
     fontSize: 17,
     fontWeight: '600',
@@ -744,8 +808,12 @@ const styles = StyleSheet.create({
   uploadPlaceholder: {
     alignItems: 'center',
   },
-  uploadIcon: {
-    fontSize: 48,
+  uploadIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 12,
   },
   uploadTitle: {
@@ -766,8 +834,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
-  fileIcon: {
-    fontSize: 40,
+  fileIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 14,
   },
   fileDetails: {
@@ -827,8 +899,12 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 3,
   },
-  pasteIcon: {
-    fontSize: 28,
+  pasteIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 14,
   },
   pasteInfo: {
@@ -856,11 +932,23 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 20,
   },
+  infoTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 8,
+  },
+  infoTitleIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   infoTitle: {
     fontSize: 15,
     fontWeight: '600',
     color: '#007AFF',
-    marginBottom: 8,
   },
   infoText: {
     fontSize: 14,
@@ -896,6 +984,31 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#007AFF',
     marginTop: 12,
+  },
+  sparkleIconActive: {
+    textShadowColor: 'rgba(255,255,255,0.65)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 6,
+  },
+  sparkleIconInactive: {
+    textShadowColor: 'rgba(102,126,234,0.35)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+  },
+  uploadIconActive: {
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 6,
+  },
+  uploadIconInactive: {
+    textShadowColor: 'rgba(102,126,234,0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+  },
+  uploadIconLarge: {
+    textShadowColor: 'rgba(59,130,246,0.4)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 6,
   },
   // Modal Styles
   modalOverlay: {

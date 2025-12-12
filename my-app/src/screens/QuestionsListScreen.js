@@ -16,6 +16,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { 
+  IconFileTextFilled,
+  IconDeviceFloppy,
+  IconBookFilled,
+  IconDownload
+} from '../icons/compat';
 import { useTheme } from '../features/Reference/theme/ThemeContext';
 import { useWebStyles } from '../components/WebContainer';
 
@@ -247,7 +253,14 @@ export default function QuestionsListScreen({ navigation, route }) {
         {/* PDF Source Info */}
         {isPDFSource && pdfInfo && (
           <View style={[styles.pdfInfoCard, { backgroundColor: isDark ? '#1A3A1A' : '#E8F8ED' }]}>
-            <Text style={styles.pdfInfoIcon}>📄</Text>
+            <LinearGradient
+              colors={['#10B981', '#059669', '#047857']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.pdfInfoIconContainer}
+            >
+              <IconFileTextFilled size={24} color="#FFFFFF" />
+            </LinearGradient>
             <View style={styles.pdfInfoContent}>
               <Text style={[styles.pdfInfoName, { color: theme.colors.text }]} numberOfLines={1}>{pdfInfo.fileName}</Text>
               <Text style={styles.pdfInfoMeta}>
@@ -260,11 +273,25 @@ export default function QuestionsListScreen({ navigation, route }) {
         {/* Action Bar */}
         <View style={styles.actionBar}>
           <TouchableOpacity style={[styles.actionButton, { backgroundColor: theme.colors.surface }]} onPress={generatePDF}>
-            <Text style={styles.actionIcon}>📄</Text>
+            <LinearGradient
+              colors={['#3B82F6', '#2563EB', '#1D4ED8']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.actionIconContainer}
+            >
+              <IconDownload stroke={2} size={18} color="#FFFFFF" />
+            </LinearGradient>
             <Text style={[styles.actionText, { color: theme.colors.primary }]}>Download PDF</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.actionButton, { backgroundColor: theme.colors.surface }]} onPress={() => openSaveModal(null, true)}>
-            <Text style={styles.actionIcon}>💾</Text>
+            <LinearGradient
+              colors={['#10B981', '#059669', '#047857']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.actionIconContainer}
+            >
+              <IconDeviceFloppy stroke={2} size={18} color="#FFFFFF" />
+            </LinearGradient>
             <Text style={[styles.actionText, { color: theme.colors.primary }]}>Save All</Text>
           </TouchableOpacity>
         </View>
@@ -308,7 +335,17 @@ export default function QuestionsListScreen({ navigation, route }) {
 
                 {/* Explanation */}
                 <View style={[styles.explanationBox, { backgroundColor: isDark ? '#3A3000' : '#FFF9E6' }]}>
-                  <Text style={[styles.explanationTitle, { color: isDark ? '#FFD700' : '#B8860B' }]}>📖 Explanation</Text>
+                  <View style={styles.explanationTitleContainer}>
+                    <LinearGradient
+                      colors={isDark ? ['#FFD700', '#FFA500', '#FF8C00'] : ['#B8860B', '#DAA520', '#CD853F']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.explanationIconContainer}
+                    >
+                      <IconBookFilled size={16} color="#FFFFFF" />
+                    </LinearGradient>
+                    <Text style={[styles.explanationTitle, { color: isDark ? '#FFD700' : '#B8860B' }]}>Explanation</Text>
+                  </View>
                   <Text style={[styles.explanationText, { color: theme.colors.text }]}>{q.explanation}</Text>
                 </View>
 
@@ -329,7 +366,15 @@ export default function QuestionsListScreen({ navigation, route }) {
                   style={[styles.saveButton, { backgroundColor: theme.colors.background }]}
                   onPress={() => openSaveModal(q, false)}
                 >
-                  <Text style={[styles.saveButtonText, { color: theme.colors.primary }]}>💾 Save to Question Bank</Text>
+                  <LinearGradient
+                    colors={['#10B981', '#059669', '#047857']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.saveButtonIconContainer}
+                  >
+                    <IconDeviceFloppy stroke={2} size={16} color="#FFFFFF" />
+                  </LinearGradient>
+                  <Text style={[styles.saveButtonText, { color: theme.colors.primary }]}>Save to Question Bank</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -455,9 +500,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  pdfInfoIcon: {
-    fontSize: 28,
+  pdfInfoIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 12,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   pdfInfoContent: {
     flex: 1,
@@ -493,9 +547,18 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  actionIcon: {
-    fontSize: 18,
+  actionIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 8,
+    shadowColor: '#3B82F6',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
   },
   actionText: {
     fontSize: 15,
@@ -597,11 +660,28 @@ const styles = StyleSheet.create({
     padding: 14,
     marginTop: 14,
   },
+  explanationTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  explanationIconContainer: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 2,
+  },
   explanationTitle: {
     fontSize: 13,
     fontWeight: '600',
     color: '#B8860B',
-    marginBottom: 6,
   },
   explanationText: {
     fontSize: 14,
@@ -656,8 +736,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#F2F2F7',
     paddingVertical: 12,
     borderRadius: 10,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 14,
+  },
+  saveButtonIconContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 2,
   },
   saveButtonText: {
     fontSize: 14,
